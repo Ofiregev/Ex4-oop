@@ -2,9 +2,9 @@ import copy
 import json
 import time
 from math import inf
-import Gui
 from DiGraph import Node, Edge, DiGraph
 import timeit
+import  client
 
 
 class GraphAlgo:
@@ -21,14 +21,14 @@ class GraphAlgo:
         """
         return self.g
 
-    def load_from_json(self, Filename: str) -> bool:
+    def load_from_json(self) -> bool:
         """
         Loads a graph from a json file.
         @param file_name: The path to the json file
         @returns True if the loading was successful, False o.w.
         """
         try:
-            f = open(Filename, 'r')
+            f = open(client.get_graph , 'r')
         except IOError:
             return False
         with f as w:
@@ -192,16 +192,5 @@ class GraphAlgo:
         f = Gui.gui
         f.__init__(f, self)
 
-
-def main():
-    g = DiGraph()
-    d = GraphAlgo(g)
-    file = '../../../Ex3_oop/data/T0.json'
-    start = timeit.default_timer()
-    d.load_from_json(file)
-    d.save_to_json("p.json")
-    stop = timeit.default_timer()
-    print('Time: ', stop - start)
-
 if __name__ == '__main__':
-    main()
+    a = GraphAlgo.get_graph()

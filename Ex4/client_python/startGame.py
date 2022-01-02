@@ -1,6 +1,10 @@
+from types import SimpleNamespace
+from client import Client
+import json
+
+
 class DiGraph:
     def __init__(self):
-
         """"we save all the nodes and the updating in the graph"""
         self.graphDict = {}  # {key :node_id, value: node_data}
         self.mc = 0
@@ -136,13 +140,24 @@ class DiGraph:
         s = pos.split(',')
         return s[1]
 
+
+class Edge:
+    def __init__(self, list):
+        self.src = list["src"]
+        self.w = list["w"]
+        self.dest = list["dest"]
+
+    def __repr__(self):
+        return f"src: {self.src} dst: {self.dest} wight: {self.w}"
+
+    def __str__(self):
+        return f"src: {self.src} dst: {self.dest} wight: {self.w}"
+
+
 class Node:
     def __init__(self, list):
         self.id = list["id"]
-        try:
-            self.pos = list["pos"]  ###Location
-        except:
-            self.pos = ''
+        self.pos = ''
         self.inEdge = {}  # this is dic of edge into our node <"other node.id",w>
         self.outEdge = {}  # this is dic of edge from our node <"other node.id",w>
 
@@ -156,14 +171,28 @@ class Node:
         return f"(node id: {self.id} node pos: {self.pos})"
 
 
-class Edge:
-    def __init__(self, list):
-        self.src = list["src"]
-        self.w = list["w"]
-        self.dest = list["dest"]
+def main():
+    # default port
+    PORT = 6666
+    # server host (default localhost 127.0.0.1)
+    HOST = '127.0.0.1'
+    client = Client()
+    client.start_connection(HOST, PORT)
+    graph_json = client.get_graph()
+    graph = json.loads(graph_json, object_hook=lambda json_dict: SimpleNamespace(**json_dict))
+    Nodes = []
+    Edges = []
+    for n in graph.Nodes:
+        Nodes.append(Node(n))
+    for e in graph.Edges:
+        Edges.append(Edge(e))
 
-    def __repr__(self):
-        return f"src: {self.src} dst: {self.dest} wight: {self.w}"
 
-    def __str__(self):
-        return f"src: {self.src} dst: {self.dest} wight: {self.w}"
+    for n in Nodes:
+        s = n.pos.split(',')
+        x = s[0]
+        y = s[1]
+        print(x)
+
+if __name__ == '__main__':
+    main()

@@ -39,6 +39,10 @@ FONT = pygame.font.SysFont('Arial', 20, bold=True)
 graph = json.loads(
     graph_json, object_hook=lambda json_dict: SimpleNamespace(**json_dict))
 
+nodes = []
+edges = []
+for e in graph.Edges:
+    edges.append(e)
 for n in graph.Nodes:
     x, y, _ = n.pos.split(',')
     n.pos = SimpleNamespace(x=float(x), y=float(y))
@@ -164,3 +168,6 @@ while client.is_running() == 'true':
 
     client.move()
 # game over:
+
+
+
