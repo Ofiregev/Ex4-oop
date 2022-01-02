@@ -21,7 +21,7 @@ class GraphAlgo:
         """
         return self.g
 
-    def load_from_json(self, Filename: str) -> bool:
+    def load_from_json(self) -> bool:
         """
         Loads a graph from a json file.
         @param file_name: The path to the json file
