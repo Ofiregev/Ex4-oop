@@ -6,8 +6,8 @@ Very simple GUI example for python client to communicates with the server and "p
 from types import SimpleNamespace
 from client import Client
 import json
-from pygame import gfxdraw
 import pygame
+from pygame import gfxdraw
 from pygame import *
 
 # init pygame
