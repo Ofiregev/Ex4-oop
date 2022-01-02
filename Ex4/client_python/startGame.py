@@ -4,6 +4,7 @@ import json
 
 
 class DiGraph:
+
     def __init__(self):
         """"we save all the nodes and the updating in the graph"""
         self.graphDict = {}  # {key :node_id, value: node_data}
@@ -47,7 +48,7 @@ class DiGraph:
         if self.graphDict.get(id1).outEdge.get(id2) is None and self.graphDict.get(id2).inEdge.get(id1) is None:
             self.graphDict.get(id1).outEdge[id2] = weight
             self.graphDict.get(id2).inEdge[id1] = weight
-            self.mc+=1
+            self.mc += 1
             return True
         return False
         """
@@ -73,10 +74,12 @@ class DiGraph:
             self.graphDict[node_id] = node
             return True
         list = {}
+
         if type(pos) is str:
             list["pos"] = pos
             list["id"] = node_id
-            node = Node(list)
+            s = SimpleNamespace(**list)
+            node = Node(s)
             self.graphDict[node_id] = node
             return True
         s = str(pos[0])
@@ -102,7 +105,7 @@ class DiGraph:
 
     #
     def remove_edge(self, node_id1: int, node_id2: int) -> bool:
-        self.mc+=1
+        self.mc += 1
         if self.graphDict.get(node_id1).outEdge.get(node_id2) is None or self.graphDict.get(node_id2).inEdge.get(
                 node_id1) is None:
             return False
@@ -125,27 +128,27 @@ class DiGraph:
             list.append(i)
         return list
 
-    def getWeightOfEdge(self,src :int, dest: int )->float:
+    def getWeightOfEdge(self, src: int, dest: int) -> float:
         """get: the src and dst of edge
         return: the wight"""
         return self.graphDict.get(src).outEdge[dest]
 
     """""convert string of geoLocation to float parameters"""
 
-    def posGetX(self,pos:str):
+    def posGetX(self, pos: str):
         s = pos.split(',')
         return s[0]
 
-    def posGetX(self,pos:str):
+    def posGetY(self, pos: str):
         s = pos.split(',')
         return s[1]
 
 
 class Edge:
-    def __init__(self, list):
-        self.src = list["src"]
-        self.w = list["w"]
-        self.dest = list["dest"]
+    def __init__(self, list:SimpleNamespace):
+        self.src = list.__dict__.get("src")
+        self.w = list.__dict__.get("w")
+        self.dest = list.__dict__.get("dest")
 
     def __repr__(self):
         return f"src: {self.src} dst: {self.dest} wight: {self.w}"
@@ -155,9 +158,9 @@ class Edge:
 
 
 class Node:
-    def __init__(self, list):
-        self.id = list["id"]
-        self.pos = ''
+    def __init__(self, list:SimpleNamespace):
+        self.id = list.__dict__.get("id")
+        self.pos = list.__dict__.get("pos")
         self.inEdge = {}  # this is dic of edge into our node <"other node.id",w>
         self.outEdge = {}  # this is dic of edge from our node <"other node.id",w>
 
@@ -171,28 +174,83 @@ class Node:
         return f"(node id: {self.id} node pos: {self.pos})"
 
 
+class startGame:
+    def __init__(self, g: DiGraph):
+        self.g = g  ## the graph Type: Digraph
+
+    def load_json(self):
+        # default port
+        PORT = 6666
+        # server host (default localhost 127.0.0.1)
+        HOST = '127.0.0.1'
+        client = Client()
+        client.start_connection(HOST, PORT)
+        graph_json = client.get_graph()
+        graph = json.loads(graph_json, object_hook=lambda json_dict: SimpleNamespace(**json_dict))
+        Nodes = []
+        Edges = []
+        for n in graph.Nodes:
+            Nodes.append(Node(n))
+        for e in graph.Edges:
+            Edges.append(Edge(e))
+        for i in Nodes:
+            self.g.add_node(i.id, i.pos)
+        for i in Edges:
+            self.g.add_edge(i.src, i.dest, i.w)
+
+        for n in Nodes:
+            s = n.pos.split(',')
+            x = s[0]
+            y = s[1]
+
+
+    def get_graph(self) -> DiGraph:
+        """
+        :return: the directed graph on which the algorithm works on.
+        """
+        return self.g
+
+    def is_nei(self,id:int):
+        list = []
+        for i in self.g.graphDict.get(id).outEdge:
+            list.append(i)
+        return list
+
+
+
+
 def main():
-    # default port
-    PORT = 6666
-    # server host (default localhost 127.0.0.1)
-    HOST = '127.0.0.1'
-    client = Client()
-    client.start_connection(HOST, PORT)
-    graph_json = client.get_graph()
-    graph = json.loads(graph_json, object_hook=lambda json_dict: SimpleNamespace(**json_dict))
-    Nodes = []
-    Edges = []
-    for n in graph.Nodes:
-        Nodes.append(Node(n))
-    for e in graph.Edges:
-        Edges.append(Edge(e))
+    g = DiGraph()
+    t = startGame(g)
+    t.load_json()
+    for i in t.get_graph().graphDict.values():
+        print(i)
+        print(t.is_nei(1))
+        print("in edge:", i.inEdge)
+        print("out edge: ", i.outEdge)
 
+    # # default port
+    # PORT = 6666
+    # # server host (default localhost 127.0.0.1)
+    # HOST = '127.0.0.1'
+    # client = Client()
+    # client.start_connection(HOST, PORT)
+    # graph_json = client.get_graph()
+    # graph = json.loads(graph_json, object_hook=lambda json_dict: SimpleNamespace(**json_dict))
+    # Nodes = []
+    # Edges = []
+    # for n in graph.Nodes:
+    #     Nodes.append(Node(n))
+    # for e in graph.Edges:
+    #     Edges.append(Edge(e))
+    #
+    #
+    # for n in Nodes:
+    #     s = n.pos.split(',')
+    #     x = s[0]
+    #     y = s[1]
+    #     print(x)
 
-    for n in Nodes:
-        s = n.pos.split(',')
-        x = s[0]
-        y = s[1]
-        print(x)
 
 if __name__ == '__main__':
     main()
