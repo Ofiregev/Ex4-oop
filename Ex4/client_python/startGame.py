@@ -1,14 +1,18 @@
 from types import SimpleNamespace
 
 from Ex4.client_python.DiGraph import DiGraph, Edge, Node
+from Ex4.client_python.student_code import client
 from client import Client
 import json
+
 
 class startGame:
     def __init__(self, g: DiGraph):
         self.g = g  ## the graph Type: Digraph
+        self.pokemon = {}
 
     def load_json(self):
+
         # default port
         PORT = 6666
         # server host (default localhost 127.0.0.1)
@@ -33,20 +37,28 @@ class startGame:
             x = s[0]
             y = s[1]
 
-
     def get_graph(self) -> DiGraph:
         """
         :return: the directed graph on which the algorithm works on.
         """
         return self.g
 
-    def is_nei(self,id:int):
+    def is_nei(self, id: int):
         list = []
         for i in self.g.graphDict.get(id).outEdge:
             list.append(self.g.graphDict.get(id).outEdge.get(i))
         return list
 
-
+    def get_pokemon(self):
+        PORT = 6666
+        # server host (default localhost 127.0.0.1)
+        HOST = '127.0.0.1'
+        client = Client()
+        client.start_connection(HOST, PORT)
+        poke = client.get_pokemons()
+        pokemons = json.loads(poke, object_hook=lambda json_dict: SimpleNamespace(**json_dict))
+        self.pokemon[pokemons.__dict__.get("pos")] = pokemons
+        print(self.pokemon)
 
 
 def main():
@@ -59,6 +71,7 @@ def main():
 
         print("in edge:", i.inEdge)
         print("out edge: ", i.outEdge)
+    t.get_pokemon()
 
     # # default port
     # PORT = 6666

@@ -141,7 +141,6 @@ class DiGraph:
         s = pos.split(',')
         return s[1]
 
-
 class Edge:
     def __init__(self, list:SimpleNamespace):
         self.src = list.__dict__.get("src")
