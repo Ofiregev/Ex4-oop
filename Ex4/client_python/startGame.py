@@ -74,6 +74,7 @@ class startGame:
                 if self.algo.distance(src, dst, sr, ds, p.type) is not None:
                     ans = self.algo.distance(src, dst, sr, ds, p.type)
             print(ans)
+            print(self.algo.shortest_path(1,int(ans[0]),int(ans[1])))
 
 
     def get_agents(self):
