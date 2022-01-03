@@ -18,7 +18,7 @@ class Algo:
                 self.edges[s] = self.graphDict.get(i.id).outEdge.get(j)
 
     ###i want to find on which edge the pokemon is on
-    def distance(self,src:str, dst:str):
+    def distance(self,src:str, dst:str,x,y):
         if self.edges.get(src,dst) is not None:
             s = self.graphDict.get(int(src))
             d = self.graphDict.get(int(dst))
@@ -27,8 +27,17 @@ class Algo:
             x2 = self.g.posGetX(d.pos)
             y2 = self.g.posGetY(d.pos)
             m = (float(y1)-float(y2))/(float(x1)-float(x2))
+            c = float(y1)-m*float(x1)
+            print(c)
+            res =y - m*x
+            print(res)
+            if c-0.01 <= res <= c+0.01:
+                return src, dst
 
-        print(m)
+
+
+
+        # print(m)
 
 
 
@@ -38,7 +47,11 @@ def main():
     t = startGame.startGame(g)
     t.load_json()
     a = Algo(t.get_graph())
-    print(a.distance("0","1"))
+    for i in a.edges:
+        s = i.split(',')
+        src = s[0]
+        dst = s[1]
+        print(a.distance(src,dst,35.195224052340706,32.10575624080796))
 
 if __name__ == '__main__':
     main()
