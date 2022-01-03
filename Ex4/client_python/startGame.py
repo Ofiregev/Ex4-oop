@@ -13,6 +13,7 @@ class startGame:
         self.algo = None
         self.pokemon = {}
         self.agents ={}
+        self.station ={}
         # default port
         PORT = 6666
         # server host (default localhost 127.0.0.1)
@@ -85,6 +86,7 @@ class startGame:
         agents = [agent.Agent for agent in agents]
         for a in agents:
             self.agents[a.id] = a
+            self.station[a.id] = []
 
 
 def main():
