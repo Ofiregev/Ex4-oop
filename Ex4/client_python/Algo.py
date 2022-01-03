@@ -28,12 +28,13 @@ class Algo:
             y2 = self.g.posGetY(d.pos)
             m = (float(y1)-float(y2))/(float(x1)-float(x2))
             c = float(y1)-m*float(x1)
-            print(c)
+            # print(c)
             res =y - m*x
-            print(res)
-            if c-0.01 <= res <= c+0.01:
+            # print(res)
+            if c-0.0001 <= res <= c+0.0001:
                 return src, dst
-
+        else:
+            return "klum"
 
 
 
@@ -47,11 +48,12 @@ def main():
     t = startGame.startGame(g)
     t.load_json()
     a = Algo(t.get_graph())
+
     for i in a.edges:
         s = i.split(',')
         src = s[0]
         dst = s[1]
-        print(a.distance(src,dst,35.195224052340706,32.10575624080796))
+        print(a.distance(src ,dst ,35.197656770719604,32.10191878639921))
 
 if __name__ == '__main__':
     main()
