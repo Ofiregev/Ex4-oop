@@ -1,9 +1,5 @@
-import json
-from types import SimpleNamespace
-
 import startGame
 import DiGraph
-from Ex4.client_python.student_code import client
 
 
 class Algo:

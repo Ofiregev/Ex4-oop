@@ -9,8 +9,6 @@ import json
 import pygame
 from pygame import gfxdraw
 from pygame import *
-from GraphAlgo import GraphAlgo
-import DiGraph
 
 # init pygame
 WIDTH, HEIGHT = 1080, 720

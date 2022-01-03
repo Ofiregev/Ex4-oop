@@ -1,9 +1,8 @@
 from types import SimpleNamespace
 
 from Ex4.client_python.DiGraph import DiGraph, Edge, Node
-from Ex4.client_python.student_code import client
-from client import Client
 import json
+from client import Client
 
 
 class startGame:
@@ -36,6 +35,12 @@ class startGame:
             s = n.pos.split(',')
             x = s[0]
             y = s[1]
+        client.start()
+
+        pokemons = client.get_pokemons()
+        pokemons_obj = json.loads(pokemons, object_hook=lambda d: SimpleNamespace(**d))
+        poke[]
+        print(self.pokemon)
 
     def get_graph(self) -> DiGraph:
         """
@@ -71,29 +76,9 @@ def main():
 
         print("in edge:", i.inEdge)
         print("out edge: ", i.outEdge)
-    t.get_pokemon()
 
-    # # default port
-    # PORT = 6666
-    # # server host (default localhost 127.0.0.1)
-    # HOST = '127.0.0.1'
-    # client = Client()
-    # client.start_connection(HOST, PORT)
-    # graph_json = client.get_graph()
-    # graph = json.loads(graph_json, object_hook=lambda json_dict: SimpleNamespace(**json_dict))
-    # Nodes = []
-    # Edges = []
-    # for n in graph.Nodes:
-    #     Nodes.append(Node(n))
-    # for e in graph.Edges:
-    #     Edges.append(Edge(e))
-    #
-    #
-    # for n in Nodes:
-    #     s = n.pos.split(',')
-    #     x = s[0]
-    #     y = s[1]
-    #     print(x)
+
+
 
 
 if __name__ == '__main__':
