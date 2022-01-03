@@ -68,7 +68,10 @@ class startGame:
                     s = i.split(',')
                     src = s[0]
                     dst = s[1]
-                    print(self.algo.distance(src, dst, sr, ds, p.type))
+                    if self.algo.distance(src, dst, sr, ds, p.type) is not None:
+                        ans = self.algo.distance(src, dst, sr, ds, p.type)
+                print(ans)
+
 
 
 def main():

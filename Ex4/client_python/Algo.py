@@ -40,9 +40,9 @@ class Algo:
                         return src, dst
                 else:
                     if src < dst:
-                        return dst, src
-                    else:
                         return src, dst
+                    else:
+                        return dst, src
 
         # print(m)
 
