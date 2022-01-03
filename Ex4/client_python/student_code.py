@@ -3,12 +3,14 @@
 OOP - Ex4
 Very simple GUI example for python client to communicates with the server and "play the game!"
 """
-from types import SimpleNamespace
-from client import Client
 import json
+from types import SimpleNamespace
+
 import pygame
-from pygame import gfxdraw
 from pygame import *
+from pygame import gfxdraw
+
+from client import Client
 
 # init pygame
 WIDTH, HEIGHT = 1080, 720
@@ -101,6 +103,7 @@ while client.is_running() == 'true':
     agents = json.loads(client.get_agents(),
                         object_hook=lambda d: SimpleNamespace(**d)).Agents
     agents = [agent.Agent for agent in agents]
+    print(agents)
     for a in agents:
         x, y, _ = a.pos.split(',')
         a.pos = SimpleNamespace(x=my_scale(

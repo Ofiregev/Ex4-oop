@@ -1,8 +1,8 @@
 import json
 from types import SimpleNamespace
 
-from DiGraph import Node, Edge, DiGraph
 import Algo
+from DiGraph import Node, Edge, DiGraph
 # from Ex4.client_python.Algo import Algo
 from client import Client
 
@@ -12,6 +12,7 @@ class startGame:
         self.g = g  ## the graph Type: Digraph
         self.algo = None
         self.pokemon = {}
+        self.agents ={}
         # default port
         PORT = 6666
         # server host (default localhost 127.0.0.1)
@@ -74,13 +75,24 @@ class startGame:
             print(ans)
 
 
+    def get_agents(self):
+        self.client.add_agent("{\"id\":0}")
+        self.client.add_agent("{\"id\":1}")
+        self.client.add_agent("{\"id\":2}")
+        self.client.add_agent("{\"id\":3}")
+        agents = json.loads(self.client.get_agents(),
+                            object_hook=lambda d: SimpleNamespace(**d)).Agents
+        agents = [agent.Agent for agent in agents]
+        for a in agents:
+            self.agents[a.id] = a
+
 
 def main():
     g = DiGraph()
     t = startGame(g)
     t.load_json()
-    t.get_pokemon()
-
+    # t.get_pokemon()
+    t.get_agents()
 
 
 
