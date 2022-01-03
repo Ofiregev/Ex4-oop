@@ -225,7 +225,7 @@ def main():
     t.load_json()
     for i in t.get_graph().graphDict.values():
         print(i)
-        print(t.is_nei(1))
+
         print("in edge:", i.inEdge)
         print("out edge: ", i.outEdge)
 
