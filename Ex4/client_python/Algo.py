@@ -12,9 +12,6 @@ class Algo:
                 s = ""
                 s = s + str(i.id) + ","
                 s = s + str(j)
-
-                # list.append(i.id)
-                # list.append(j)
                 self.edges[s] = self.graphDict.get(i.id).outEdge.get(j)
 
 
@@ -33,7 +30,7 @@ class Algo:
             m = (float(y1) - float(y2)) / (float(x1) - float(x2))
             c = float(y1) - m * float(x1)
             # print(c)
-            res = y - m * x
+            res = float(y) - m * float(x)
             # print(res)
             if c - 0.0001 <= res <= c + 0.0001:
                 if type == -1:

@@ -2,23 +2,26 @@ import json
 from types import SimpleNamespace
 
 from DiGraph import Node, Edge, DiGraph
+import Algo
+# from Ex4.client_python.Algo import Algo
 from client import Client
 
 
 class startGame:
     def __init__(self, g: DiGraph):
         self.g = g  ## the graph Type: Digraph
+        self.algo = None
         self.pokemon = {}
-
-    def load_json(self):
-
         # default port
         PORT = 6666
         # server host (default localhost 127.0.0.1)
         HOST = '127.0.0.1'
-        client = Client()
-        client.start_connection(HOST, PORT)
-        graph_json = client.get_graph()
+        self.client = Client()
+        self.client.start_connection(HOST, PORT)
+
+    def load_json(self):
+
+        graph_json = self.client.get_graph()
         graph = json.loads(graph_json, object_hook=lambda json_dict: SimpleNamespace(**json_dict))
         Nodes = []
         Edges = []
@@ -36,13 +39,8 @@ class startGame:
             x = s[0]
             y = s[1]
 
-        pokemons = json.loads(client.get_pokemons(),
-                              object_hook=lambda d: SimpleNamespace(**d)).Pokemons
-        pokemons = [p.Pokemon for p in pokemons]
-        for p in pokemons:
-            self.pokemon[p.pos] = p
-        for p in self.pokemon:
-            print(p)
+        self.algo = Algo.Algo(self.g)
+
 
     def get_graph(self) -> DiGraph:
         """
@@ -57,22 +55,27 @@ class startGame:
         return list
 
     def get_pokemon(self):
-        PORT = 6666
-        # server host (default localhost 127.0.0.1)
-        HOST = '127.0.0.1'
-        client = Client()
-        client.start_connection(HOST, PORT)
-        poke = client.get_pokemons()
-        pokemons = json.loads(poke, object_hook=lambda json_dict: SimpleNamespace(**json_dict))
-        self.pokemon[pokemons.__dict__.get("pos")] = pokemons
-        print(self.pokemon)
+        pokemons = json.loads(self.client.get_pokemons(),
+                              object_hook=lambda d: SimpleNamespace(**d)).Pokemons
+        pokemons = [p.Pokemon for p in pokemons]
+        for p in pokemons:
+            self.pokemon[p.pos] = p
+            for p in self.pokemon.values():
+                w = p.pos.split(',')
+                sr = w[0]
+                ds = w[1]
+                for i in self.algo.edges:
+                    s = i.split(',')
+                    src = s[0]
+                    dst = s[1]
+                    print(self.algo.distance(src, dst, sr, ds, p.type))
 
 
 def main():
     g = DiGraph()
     t = startGame(g)
     t.load_json()
-
+    t.get_pokemon()
 
 
 
