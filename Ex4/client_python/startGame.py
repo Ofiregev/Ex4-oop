@@ -213,7 +213,7 @@ class startGame:
     def is_nei(self,id:int):
         list = []
         for i in self.g.graphDict.get(id).outEdge:
-            list.append(i)
+            list.append(self.g.graphDict.get(id).outEdge.get(i))
         return list
 
 
@@ -225,6 +225,7 @@ def main():
     t.load_json()
     for i in t.get_graph().graphDict.values():
         print(i)
+        print(t.is_nei(1))
 
         print("in edge:", i.inEdge)
         print("out edge: ", i.outEdge)

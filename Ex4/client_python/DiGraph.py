@@ -132,7 +132,7 @@ class DiGraph:
         s = pos.split(',')
         return s[0]
 
-    def posGetX(self,pos:str):
+    def posGetY(self,pos:str):
         s = pos.split(',')
         return s[1]
 
