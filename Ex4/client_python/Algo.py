@@ -3,7 +3,7 @@ import DiGraph
 
 
 class Algo:
-    def __init__(self,g:DiGraph):
+    def __init__(self, g:DiGraph):
         self.g = g
         self.graphDict = self.g.graphDict
         self.edges = {}
@@ -11,14 +11,14 @@ class Algo:
             for j in i.outEdge:
                 s = ""
                 s = s + str(i.id)+","
-                s=s+str(j)
+                s = s+str(j)
 
                 # list.append(i.id)
                 # list.append(j)
                 self.edges[s] = self.graphDict.get(i.id).outEdge.get(j)
 
     ###i want to find on which edge the pokemon is on
-    def distance(self,src:str, dst:str,x,y):
+    def distance(self,src:str, dst:str,x,y,type:int):
         if self.edges.get(src,dst) is not None:
             s = self.graphDict.get(int(src))
             d = self.graphDict.get(int(dst))
@@ -32,9 +32,16 @@ class Algo:
             res =y - m*x
             # print(res)
             if c-0.0001 <= res <= c+0.0001:
-                return src, dst
-        else:
-            return "klum"
+                if type == -1:
+                    if src < dst:
+                        return dst, src
+                    else:
+                        return src, dst
+                else:
+                    if src < dst:
+                        return dst, src
+                    else:
+                        return src, dst
 
 
 
@@ -53,7 +60,7 @@ def main():
         s = i.split(',')
         src = s[0]
         dst = s[1]
-        print(a.distance(src ,dst ,35.197656770719604,32.10191878639921))
+        print(a.distance(src ,dst ,35.197656770719604,32.10191878639921,-1))
 
 if __name__ == '__main__':
     main()

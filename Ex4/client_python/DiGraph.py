@@ -1,6 +1,9 @@
-class DiGraph:
-    def __init__(self):
+from types import SimpleNamespace
 
+
+class DiGraph:
+
+    def __init__(self):
         """"we save all the nodes and the updating in the graph"""
         self.graphDict = {}  # {key :node_id, value: node_data}
         self.mc = 0
@@ -43,7 +46,7 @@ class DiGraph:
         if self.graphDict.get(id1).outEdge.get(id2) is None and self.graphDict.get(id2).inEdge.get(id1) is None:
             self.graphDict.get(id1).outEdge[id2] = weight
             self.graphDict.get(id2).inEdge[id1] = weight
-            self.mc+=1
+            self.mc += 1
             return True
         return False
         """
@@ -69,10 +72,12 @@ class DiGraph:
             self.graphDict[node_id] = node
             return True
         list = {}
+
         if type(pos) is str:
             list["pos"] = pos
             list["id"] = node_id
-            node = Node(list)
+            s = SimpleNamespace(**list)
+            node = Node(s)
             self.graphDict[node_id] = node
             return True
         s = str(pos[0])
@@ -98,7 +103,7 @@ class DiGraph:
 
     #
     def remove_edge(self, node_id1: int, node_id2: int) -> bool:
-        self.mc+=1
+        self.mc += 1
         if self.graphDict.get(node_id1).outEdge.get(node_id2) is None or self.graphDict.get(node_id2).inEdge.get(
                 node_id1) is None:
             return False
@@ -121,28 +126,39 @@ class DiGraph:
             list.append(i)
         return list
 
-    def getWeightOfEdge(self,src :int, dest: int )->float:
+    def getWeightOfEdge(self, src: int, dest: int) -> float:
         """get: the src and dst of edge
         return: the wight"""
         return self.graphDict.get(src).outEdge[dest]
 
     """""convert string of geoLocation to float parameters"""
 
-    def posGetX(self,pos:str):
+    def posGetX(self, pos: str):
         s = pos.split(',')
         return s[0]
 
-    def posGetY(self,pos:str):
+    def posGetY(self, pos: str):
         s = pos.split(',')
         return s[1]
 
+
+class Edge:
+    def __init__(self, list:SimpleNamespace):
+        self.src = list.__dict__.get("src")
+        self.w = list.__dict__.get("w")
+        self.dest = list.__dict__.get("dest")
+
+    def __repr__(self):
+        return f"src: {self.src} dst: {self.dest} wight: {self.w}"
+
+    def __str__(self):
+        return f"src: {self.src} dst: {self.dest} wight: {self.w}"
+
+
 class Node:
-    def __init__(self, list):
-        self.id = list["id"]
-        try:
-            self.pos = list["pos"]  ###Location
-        except:
-            self.pos = ''
+    def __init__(self, list:SimpleNamespace):
+        self.id = list.__dict__.get("id")
+        self.pos = list.__dict__.get("pos")
         self.inEdge = {}  # this is dic of edge into our node <"other node.id",w>
         self.outEdge = {}  # this is dic of edge from our node <"other node.id",w>
 
@@ -155,15 +171,3 @@ class Node:
     def __str__(self):
         return f"(node id: {self.id} node pos: {self.pos})"
 
-
-class Edge:
-    def __init__(self, list):
-        self.src = list["src"]
-        self.w = list["w"]
-        self.dest = list["dest"]
-
-    def __repr__(self):
-        return f"src: {self.src} dst: {self.dest} wight: {self.w}"
-
-    def __str__(self):
-        return f"src: {self.src} dst: {self.dest} wight: {self.w}"
