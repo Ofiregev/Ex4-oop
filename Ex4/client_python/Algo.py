@@ -55,7 +55,7 @@ def main():
     t = startGame.startGame(g)
     t.load_json()
     a = Algo(t.get_graph())
-
+###
     for i in a.edges:
         s = i.split(',')
         src = s[0]
