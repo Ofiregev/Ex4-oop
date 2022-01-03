@@ -60,17 +60,18 @@ class startGame:
         pokemons = [p.Pokemon for p in pokemons]
         for p in pokemons:
             self.pokemon[p.pos] = p
-            for p in self.pokemon.values():
-                w = p.pos.split(',')
-                sr = w[0]
-                ds = w[1]
-                for i in self.algo.edges:
-                    s = i.split(',')
-                    src = s[0]
-                    dst = s[1]
-                    if self.algo.distance(src, dst, sr, ds, p.type) is not None:
-                        ans = self.algo.distance(src, dst, sr, ds, p.type)
-                print(ans)
+        for p in self.pokemon.values():
+            print(p)
+            w = p.pos.split(',')
+            sr = w[0]
+            ds = w[1]
+            for i in self.algo.edges:
+                s = i.split(',')
+                src = s[0]
+                dst = s[1]
+                if self.algo.distance(src, dst, sr, ds, p.type) is not None:
+                    ans = self.algo.distance(src, dst, sr, ds, p.type)
+            print(ans)
 
 
 
