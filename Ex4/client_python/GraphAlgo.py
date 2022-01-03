@@ -1,196 +1,171 @@
-import copy
-import json
-import time
-from math import inf
-from DiGraph import Node, Edge, DiGraph
-import timeit
-import  client
+from types import SimpleNamespace
+class DiGraph:
 
+    def __init__(self):
+        """"we save all the nodes and the updating in the graph"""
+        self.graphDict = {}  # {key :node_id, value: node_data}
+        self.mc = 0
 
-class GraphAlgo:
-    def __init__(self,g:DiGraph):
-        self.g = g  ## the graph Type: Digraph
-        self.D = {}  ## dict for calculate dijckstra
-        self.nodeQ = []
-        self.black = []
-        self.parent = {}
+    def v_size(self) -> int:
 
-    def get_graph(self) -> DiGraph:
-        """
-        :return: the directed graph on which the algorithm works on.
-        """
-        return self.g
+        """ return the number of vertex in the graph"""
+        return self.Nodes.__len__()
 
-    def load_from_json(self) -> bool:
-        """
-        Loads a graph from a json file.
-        @param file_name: The path to the json file
-        @returns True if the loading was successful, False o.w.
-        """
-        try:
-            f = open(client.get_graph , 'r')
-        except IOError:
+    def e_size(self) -> int:
+
+        """ return the number of Edge in the graph"""
+        return self.Edges.__len__()
+
+    def get_all_v(self) -> dict:
+        """"return all the graph vertical in dictionary <key, Node>"""
+        return self.graphDict
+
+    def all_in_edges_of_node(self, id1: int) -> dict:
+
+        """":param the id of the node
+        :return all the edge that get into this vertical <key of src, wight>"""
+        return self.graphDict.get(id1).inEdge
+        """return a dictionary of all the nodes connected to (into) node_id ,
+        each node is represented using a pair (other_node_id, weight)
+         """
+
+    def all_out_edges_of_node(self, id1: int) -> dict:
+        """":param the id of the node
+           :return all the edge that get from the node to other <key of src, wight>"""
+        return self.graphDict.get(id1).outEdge
+
+    def get_mc(self) -> int:
+        """represent the number of changes that does on the graph """
+        return self.mc
+
+    def add_edge(self, id1: int, id2: int, weight: float) -> bool:
+        if self.graphDict.get(id1) is None or self.graphDict.get(id2) is None:
             return False
-        with f as w:
-            obj = json.load(w)
-            nodes = obj["Nodes"]
-            edge = obj["Edges"]
-            Nodes = []
-            Edges = []
-        for n in nodes:
-            Nodes.append(Node(n))
-        for e in edge:
-            Edges.append(Edge(e))
-        for i in Nodes:
-            self.g.add_node(i.id, i.pos)
-        for i in Edges:
-            self.g.add_edge(i.src, i.dest, i.w)
+        if self.graphDict.get(id1).outEdge.get(id2) is None and self.graphDict.get(id2).inEdge.get(id1) is None:
+            self.graphDict.get(id1).outEdge[id2] = weight
+            self.graphDict.get(id2).inEdge[id1] = weight
+            self.mc += 1
+            return True
+        return False
+        """
+        Adds an edge to the graph.
+        @param id1: The start node of the edge
+        @param id2: The end node of the edge
+        @param weight: The weight of the edge
+        @return: True if the edge was added successfully, False o.w.
+        Note: 
+         will do nothing
+        """
 
+    def add_node(self, node_id: int, pos: tuple = None) -> bool:
+        self.mc = self.mc + 1
+        if self.graphDict.get(node_id) is not None:
+            return False
+        """ checking why we need to insert empty pos"""
+        if pos is None:
+            list = {}
+            list["id"] = node_id
+            list["pos"] = ""
+            node = Node(list)
+            self.graphDict[node_id] = node
+            return True
+        list = {}
+
+        if type(pos) is str:
+            list["pos"] = pos
+            list["id"] = node_id
+            s = SimpleNamespace(**list)
+            node = Node(s)
+            self.graphDict[node_id] = node
+            return True
+        s = str(pos[0])
+        for st in pos[1:]:
+            s += "," + str(st)
+        list["id"] = node_id
+        list["pos"] = s
+        node = Node(list)
+        self.graphDict[node_id] = node
         return True
 
-    def save_to_json(self, file_name: str) -> bool:
-        nd = []
-        ed = []
-        for key in self.g.graphDict.keys():
-            nd.append({"id": key,
-                       "pos": self.g.graphDict[key].pos})
-            for e in self.g.graphDict[key].outEdge:
-                ed.append({"src": key, "w": self.g.graphDict[key].outEdge[e], "dest": e})
-        dic = {}
-        dic["Nodes"] = nd
-        dic["Edges"] = ed
-        json_object = json.dumps(dic)
-        try:
-            f = open(file_name, 'w')
-        except IOError:
+    def remove_node(self, node_id: int) -> bool:
+        if self.graphDict.__contains__(node_id):
+            self.graphDict.pop(node_id)
+            return True
+        return False
+        """
+        Removes a node from the graph.
+        @param node_id: The node ID
+        @return: True if the node was removed successfully, False o.w.
+        Note: if the node id does not exists the function will do nothing
+        """
+
+    #
+    def remove_edge(self, node_id1: int, node_id2: int) -> bool:
+        self.mc += 1
+        if self.graphDict.get(node_id1).outEdge.get(node_id2) is None or self.graphDict.get(node_id2).inEdge.get(
+                node_id1) is None:
             return False
-        f.write(json_object)
-        f.close()
-        # with f as outFile:
-        #     outFile.write(json_object)
-        #     outFile.close()
+        del (self.graphDict.get(node_id1).outEdge)[node_id2]
+        del (self.graphDict.get(node_id2).inEdge)[node_id1]
         return True
-    def TSP(self, node_lst: list[int]) -> (list[int], float):
-        """Greedy Alogorithem - serch for every premutetaion what is the best start node to build shortest path from it"""
-        min = inf
-        """this is the Global min for all the permutations"""
-        lst = []
-        """this lst will represent the most better permutation of the list"""
-        for i in node_lst:
-            """checking when every node is the beginning of the circle what is the most good permutation"""
-            temp = self.find_way(copy.deepcopy(node_lst), i)
-            if temp[1] < min:
-                min = temp[1]
-                lst = temp[0]
-        return [lst, min]
 
-    def find_way(self, lst: list, start: int):
-        """"help to TSP function' calculate for every start node the best Circle permute! """
-        per = []
-        per.append(start)
-        lst.remove(start)
-        index = 0
-        w = 0
-        nex = start
-        while lst:
-            self.Dijkstra(nex)
-            min = self.D.get(lst[0])
-            for e in lst:
-                if self.D.get(e) <= min:
-                    min = self.D.get(e)
-                    index = e
-            nex = index
-            lst.remove(nex)
-            per.append(nex)
-            w += min
-        per.append(start)
-        self.Dijkstra(nex)
-        w += self.D.get(start)
+        """
+        Removes an edge from the graph.
+        @param node_id1: The start node of the edge
+        @param node_id2: The end node of the edge
+        @return: True if the edge was removed successfully, False o.w.
+        Note: If such an edge does not exists the function will do nothing
+        """
 
-        return [per, w]
-
-    def Dijkstra(self, src: int):
-
-        """finding the sorted path for every src,
-        The algo save only the path of one src' in self.D, if we run this for other
-        src it will it will change the param on self.D"""
-        self.D = {}
-        self.nodeQ = []
-        self.black = []
-        self.parent = {}
-        self.D["maxPath"] = float(-inf)
-        for i in self.g.graphDict:
-            if i == src:
-                self.nodeQ.append({"id": src, "w": 0})
-                self.D[src] = 0
-                self.parent[src] = -1
-            else:
-                self.D[i] = inf  ##save in a dictinury the nodes w ,this is good bebause its by key
-        while len(self.black) != len(self.g.graphDict):
-            if self.nodeQ.__len__() == 0:
-                return
-            self.nodeQ = sorted(self.nodeQ, key=lambda i: i['w'])
-            v = self.nodeQ.pop(0)['id']
-            if (self.black.__contains__(v)):
-                continue
-            self.black.append(v)
-            nei = self.g.getEdgeBySrc(v)
-            for i in nei:
-                self.relax(v, i)
-        for i in self.g.graphDict:
-            if self.D[i] > self.D["maxPath"]:
-                self.D["maxPath"] = self.D[i]
-
-    def relax(self, v, t):
-        curr_w = self.D[v] + self.g.getWeightOfEdge(v, t)
-        if self.D[t] > float(curr_w):
-            self.D[t] = float(curr_w)
-            self.parent[t] = v
-            self.nodeQ.append({"id": t, "w": curr_w})
-
-    def shortest_path(self, id1: int, id2: int) -> (float, list):
-        if self.g.graphDict.get(id2) is None or self.g.graphDict.get(id1) is None:
-            list = []
-            list.append(float('inf'))
-            list.append([])
-            return list
-        self.Dijkstra(id1)
-        list1 = []
-        list2 = []
-        list1.append(self.D[id2])
-        list2.append(id1)
-        i = id2
-        while (i != -1 and self.parent.get(i) != -1):
-            t = self.parent.get(i)
-            list2.append(t)
-            i = self.parent[t]
-        list2.append(id2)
-        list1.append(list2)
-        return list1
-
-    def centerPoint(self) -> (int, float):
-
-        """find the node that have the min wight to move to all the other Nodes"""
-        MAXLIST = {}
-        minMaxPath = float(inf)
-        node_id = -1
-        for i in self.g.graphDict.keys():
-            self.Dijkstra(i)
-            MAXLIST[i] = self.D.get("maxPath")
-            if self.D.get("maxPath") < minMaxPath:
-                minMaxPath = self.D.get("maxPath")
-                node_id = i
+    def getEdgeBySrc(self, v: int) -> list:
+        """this function get node id and return a list of all of its neighbors"""
         list = []
-        list.append(node_id)
-        list.append(minMaxPath)
-        # print(MAXLIST)
-        # print(MAXLIST.get(362))
+        for i in self.graphDict.get(v).outEdge:
+            list.append(i)
         return list
 
-    def plot_graph(self) -> None:
-        """show the graphic Properties of our DiGraph"""
-        f = Gui.gui
-        f.__init__(f, self)
+    def getWeightOfEdge(self, src: int, dest: int) -> float:
+        """get: the src and dst of edge
+        return: the wight"""
+        return self.graphDict.get(src).outEdge[dest]
 
-if __name__ == '__main__':
-    a = GraphAlgo.get_graph()
+    """""convert string of geoLocation to float parameters"""
+
+    def posGetX(self, pos: str):
+        s = pos.split(',')
+        return s[0]
+
+    def posGetY(self, pos: str):
+        s = pos.split(',')
+        return s[1]
+
+
+class Edge:
+    def __init__(self, list:SimpleNamespace):
+        self.src = list.__dict__.get("src")
+        self.w = list.__dict__.get("w")
+        self.dest = list.__dict__.get("dest")
+
+    def __repr__(self):
+        return f"src: {self.src} dst: {self.dest} wight: {self.w}"
+
+    def __str__(self):
+        return f"src: {self.src} dst: {self.dest} wight: {self.w}"
+
+
+class Node:
+    def __init__(self, list:SimpleNamespace):
+        self.id = list.__dict__.get("id")
+        self.pos = list.__dict__.get("pos")
+        self.inEdge = {}  # this is dic of edge into our node <"other node.id",w>
+        self.outEdge = {}  # this is dic of edge from our node <"other node.id",w>
+
+    def __iter__(self):
+        return self.inEdge
+
+    def __repr__(self):
+        return f"(id: {self.id} node pos: {self.pos})"
+
+    def __str__(self):
+        return f"(node id: {self.id} node pos: {self.pos})"
+

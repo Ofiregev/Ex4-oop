@@ -1,7 +1,7 @@
+import json
 from types import SimpleNamespace
 
-from Ex4.client_python.DiGraph import DiGraph, Edge, Node
-import json
+from DiGraph import Node, Edge, DiGraph
 from client import Client
 
 
@@ -35,12 +35,14 @@ class startGame:
             s = n.pos.split(',')
             x = s[0]
             y = s[1]
-        client.start()
 
-        pokemons = client.get_pokemons()
-        pokemons_obj = json.loads(pokemons, object_hook=lambda d: SimpleNamespace(**d))
-        poke[]
-        print(self.pokemon)
+        pokemons = json.loads(client.get_pokemons(),
+                              object_hook=lambda d: SimpleNamespace(**d)).Pokemons
+        pokemons = [p.Pokemon for p in pokemons]
+        for p in pokemons:
+            self.pokemon[p.pos] = p
+        for p in self.pokemon.values():
+            print(p)
 
     def get_graph(self) -> DiGraph:
         """
@@ -70,12 +72,7 @@ def main():
     g = DiGraph()
     t = startGame(g)
     t.load_json()
-    for i in t.get_graph().graphDict.values():
-        print(i)
-        print(t.is_nei(1))
 
-        print("in edge:", i.inEdge)
-        print("out edge: ", i.outEdge)
 
 
 
