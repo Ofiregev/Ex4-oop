@@ -41,7 +41,7 @@ class startGame:
         pokemons = [p.Pokemon for p in pokemons]
         for p in pokemons:
             self.pokemon[p.pos] = p
-        for p in self.pokemon.values():
+        for p in self.pokemon:
             print(p)
 
     def get_graph(self) -> DiGraph:
