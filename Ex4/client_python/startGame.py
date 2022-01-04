@@ -110,11 +110,14 @@ class startGame:
                     if min >= res:
                         min = res
                         choose = p
-                self.station[agent.id] = self.algo.shortest_path(agent.src,choose.edge[0],choose.edge[1],int(choose.type))
+
+                l =self.algo.shortest_path(agent.src,choose.edge[0],choose.edge[1],int(choose.type))
+                w = l[0].pop(0)
+                self.station[agent.id] = l[1]
                 agent.busy = True
                 choose.taken = True
                 print(self.agents.get(agent.id))
-
+        self.client.move()
 
         # for agent in self.agents.values():
         #     if int(agent.dest) == -1:
@@ -126,7 +129,7 @@ class startGame:
                 # print(self.client.get_pokemons())
                 # print(self.client.get_agents())
 
-        self.client.move()
+
 
 
 def main():
@@ -136,10 +139,6 @@ def main():
     t.get_agents()
     t.get_pokemon()
     t.main_loop()
-
-
-
-
 
 
 
