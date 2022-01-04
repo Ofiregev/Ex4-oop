@@ -66,7 +66,7 @@ class Algo:
             return list
         self.Dijkstra(id1)
         list2 = []
-        # list2.append(id1)
+        list2.append(id1)
         list3=[]
         i = id2
         while (i != -1 and self.parent.get(i) != -1):
@@ -80,13 +80,12 @@ class Algo:
         list2.append(dest)
         return list2
 
+
     def time_to_take(self, speed:float, w:float ):
         return w/speed
 
-    def min_price(self, agent:agent, pok:list[pokemon]):
-        min = inf
-        for p in pok:
-            print(p)
+    def min_price(self, agent:agent, pok_value,pok_w):
+       return pok_value/self.time_to_take(agent.speed,pok_w)
 
 
 
@@ -121,7 +120,7 @@ def main():
     a = Algo(t.get_graph())
     t.get_agents()
 
-    #print(a.shortest_path(1,8))
+    print(a.shortest_path(1,8,9))
     ###
     # for i in a.edges:
     #     s = i.split(',')

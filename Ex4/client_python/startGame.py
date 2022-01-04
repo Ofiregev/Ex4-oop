@@ -4,6 +4,7 @@ from types import SimpleNamespace
 
 import Algo
 from DiGraph import Node, Edge, DiGraph
+from Ex4.client_python import players
 from client import Client
 from players import pokemon as pok
 
@@ -67,18 +68,17 @@ class startGame:
         pokemons = [p.Pokemon for p in pokemons]
         for p in pokemons:
             if not self.pokemon.get(p.pos):
-                    w = p.pos.split(',')
-                    sr = w[0]
-                    ds = w[1]
-                    for i in self.algo.edges:
-                        s = i.split(',')
-                        src = s[0]
-                        dst = s[1]
-                        if self.algo.distance(src, dst, sr, ds, p.type) is not None:
-                            ans = self.algo.distance(src, dst, sr, ds, int(p.type))
-                            self.pokemon[p.pos] = pok(p,ans)
-                            print (self.pokemon.get(p.pos).edge)
-
+                w = p.pos.split(',')
+                sr = w[0]
+                ds = w[1]
+                for i in self.algo.edges:
+                    s = i.split(',')
+                    src = s[0]
+                    dst = s[1]
+                    if self.algo.distance(src, dst, sr, ds, p.type) is not None:
+                        ans = self.algo.distance(src, dst, sr, ds, int(p.type))
+                        self.pokemon[p.pos] = pok(p, ans)
+                        print(self.pokemon.get(p.pos).edge)
 
     def main_loop(self):
         self.client.start()
@@ -99,12 +99,29 @@ class startGame:
 
     def next_station(self):
         # choose next edge
+        min = 10000
+        choose = None
         for agent in self.agents.values():
-            if int(agent.dest) == -1:
-                next_node = self.station.get(0).pop(0)
-                self.client.choose_next_edge(
-                    '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
-                ttl = self.client.time_to_end()
+            if agent.dest == -1 and not agent.busy:
+                for p in self.pokemon.values():
+                    if p.taken:
+                        continue
+                    res = self.algo.min_price(agent, p)
+                    if min >= res:
+                        min = res
+                        choose = p
+                self.station[agent.id] = self.algo.shortest_path(agent.src,choose.edge[0],choose.edge[1],int(choose.type))
+                agent.busy = True
+                choose.taken = True
+                print(self.agents.get(agent.id))
+
+
+        # for agent in self.agents.values():
+        #     if int(agent.dest) == -1:
+        #         next_node = self.station.get(0).pop(0)
+        #         self.client.choose_next_edge(
+        #             '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
+        #         ttl = self.client.time_to_end()
                 # print(ttl, self.client.get_info())
                 # print(self.client.get_pokemons())
                 # print(self.client.get_agents())
@@ -116,9 +133,9 @@ def main():
     g = DiGraph()
     t = startGame(g)
     t.load_json()
-    # t.get_agents()
+    t.get_agents()
     t.get_pokemon()
-    # t.main_loop()
+    t.main_loop()
 
 
 

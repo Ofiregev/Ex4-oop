@@ -4,8 +4,11 @@ from types import SimpleNamespace
 class pokemon:
     def __init__(self, p: SimpleNamespace, e: list):
         self.info = p
+        self.value = p.value
+        self.pos = p.pos
         self.edge = e
-        self.taken_by = False
+        self.type = p.type
+        self.taken = False
         self.isDone = False
 
 
