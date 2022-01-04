@@ -5,6 +5,7 @@ from types import SimpleNamespace
 import Algo
 from DiGraph import Node, Edge, DiGraph
 from client import Client
+import players
 
 
 class startGame:
@@ -92,8 +93,9 @@ class startGame:
                             object_hook=lambda d: SimpleNamespace(**d)).Agents
         agents = [agent.Agent for agent in agents]
         for a in agents:
-            self.agents[a.id] = a
+            self.agents[a.id] = players.agent(a)
             self.station[a.id] = []
+            print(self.agents[a.id])
 
     def next_station(self):
         # choose next edge
@@ -103,9 +105,9 @@ class startGame:
                 self.client.choose_next_edge(
                     '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
                 ttl = self.client.time_to_end()
-                print(ttl, self.client.get_info())
-                print(self.client.get_pokemons())
-                print(self.client.get_agents())
+                # print(ttl, self.client.get_info())
+                # print(self.client.get_pokemons())
+                # print(self.client.get_agents())
 
         self.client.move()
 
@@ -115,8 +117,8 @@ def main():
     t = startGame(g)
     t.load_json()
     t.get_agents()
-    t.get_pokemon()
-    t.main_loop()
+    # t.get_pokemon()
+    # t.main_loop()
 
 
 

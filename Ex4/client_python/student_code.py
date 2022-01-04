@@ -10,6 +10,8 @@ import pygame
 from pygame import *
 from pygame import gfxdraw
 
+from Ex4.client_python.DiGraph import DiGraph
+from Ex4.client_python.startGame import startGame
 from client import Client
 
 # init pygame
@@ -164,16 +166,23 @@ while client.is_running() == 'true':
     clock.tick(60)
 
     # choose next edge
-    for agent in agents:
-        if agent.dest == -1:
-            next_node = (agent.src - 1) % len(graph.Nodes)
-            client.choose_next_edge(
-                '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
-            ttl = client.time_to_end()
-            print(ttl, client.get_info())
-            print(client.get_pokemons())
-
-    client.move()
+    g = DiGraph()
+    t = startGame(g)
+    # t.load_json()
+    # t.get_agents()
+    # t.get_pokemon()
+    t.main_loop()
+    #
+    # for agent in agents:
+    #     if agent.dest == -1:
+    #         next_node = (agent.src - 1) % len(graph.Nodes)
+    #         client.choose_next_edge(
+    #             '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
+    #         ttl = client.time_to_end()
+    #         print(ttl, client.get_info())
+    #         print(client.get_pokemons())
+    #
+    # client.move()
 # game over:
 
 

@@ -2,7 +2,7 @@ from math import inf
 
 import DiGraph
 import startGame
-from Tools import pokemon, agent
+from players import pokemon, agent
 
 
 class Algo:
@@ -86,6 +86,7 @@ class Algo:
     def min_price(self, agent:agent, pok:list[pokemon]):
         min = inf
         for p in pok:
+            print(p)
 
 
 
@@ -118,7 +119,9 @@ def main():
     t = startGame.startGame(g)
     t.load_json()
     a = Algo(t.get_graph())
-    print(a.shortest_path(1,8))
+    t.get_agents()
+
+    #print(a.shortest_path(1,8))
     ###
     # for i in a.edges:
     #     s = i.split(',')
