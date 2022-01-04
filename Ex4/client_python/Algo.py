@@ -2,6 +2,7 @@ from math import inf
 
 import DiGraph
 import startGame
+from Tools import pokemon, agent
 
 
 class Algo:
@@ -79,16 +80,17 @@ class Algo:
         list2.append(dest)
         return list2
 
+    def time_to_take(self, speed:float, w:float ):
+        return w/speed
 
-
-
-
-
+    def min_price(self, agent:agent, pok:list[pokemon]):
+        min = inf
+        for p in pok:
+            min  =
 
 
 
     ###i want to find on which edge the pokemon is on
-
     def distance(self, src: str, dst: str, x, y, type: int):
         if self.edges.get(src, dst) is not None:
             s = self.graphDict.get(int(src))

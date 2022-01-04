@@ -4,7 +4,6 @@ from types import SimpleNamespace
 
 import Algo
 from DiGraph import Node, Edge, DiGraph
-# from Ex4.client_python.Algo import Algo
 from client import Client
 
 
@@ -21,7 +20,7 @@ class startGame:
         HOST = '127.0.0.1'
         self.client = Client()
         self.client.start_connection(HOST, PORT)
-        self.client.add_agent("{\"id\":0}")
+        self.client.add_agent("{\"id\":9}")
         self.client.add_agent("{\"id\":1}")
         self.client.add_agent("{\"id\":2}")
         self.client.add_agent("{\"id\":3}")
@@ -68,7 +67,6 @@ class startGame:
         for p in pokemons:
             self.pokemon[p.pos] = p
         for p in self.pokemon.values():
-            print(p)
             w = p.pos.split(',')
             sr = w[0]
             ds = w[1]
@@ -80,7 +78,6 @@ class startGame:
                     ans = self.algo.distance(src, dst, sr, ds, int(p.type))
                     self.station[0] = (self.algo.shortest_path(int(self.agents.get(0).src), int(ans[0]), int(ans[1])))
                     self.station.get(0).pop(0)
-            print(self.station.get(0))
 
     def main_loop(self):
         self.client.start()
@@ -89,7 +86,6 @@ class startGame:
             self.get_pokemon()
             self.next_station()
             time.sleep(0.1)
-        print(self.client.get_info())
 
     def get_agents(self):
         agents = json.loads(self.client.get_agents(),
@@ -104,14 +100,12 @@ class startGame:
         for agent in self.agents.values():
             if int(agent.dest) == -1:
                 next_node = self.station.get(0).pop(0)
-                print(next_node, agent.dest)
                 self.client.choose_next_edge(
                     '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
                 ttl = self.client.time_to_end()
                 print(ttl, self.client.get_info())
                 print(self.client.get_pokemons())
                 print(self.client.get_agents())
-
 
         self.client.move()
 
