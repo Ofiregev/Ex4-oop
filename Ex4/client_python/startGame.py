@@ -100,23 +100,31 @@ class startGame:
     def next_station(self):
         # choose next edge
         min = 10000
-        choose = None
+        list1 = None
         for agent in self.agents.values():
             if agent.dest == -1 and not agent.busy:
+                choose = pok
                 for p in self.pokemon.values():
                     if p.taken:
                         continue
-                    res = self.algo.min_price(agent, p)
+                    w = (self.algo.shortest_path(agent.src, int(p.edge[0]), int(p.edge[1])))
+                    print(w)
+                    res = self.algo.min_price(agent,p.value,w[0])
                     if min >= res:
                         min = res
-                        choose = p
-
-                l =self.algo.shortest_path(agent.src,choose.edge[0],choose.edge[1],int(choose.type))
-                w = l[0].pop(0)
-                self.station[agent.id] = l[1]
+                        # choose = p
+                        list1 = w
+                    print(list1)
+                # l =self.algo.shortest_path(agent.src,int(choose.edge[0]),int(choose.edge[1]))
+                list1[1].pop(0)
+                self.station[agent.id] = list1[1]
+                next_node = self.station.get(0).pop(0)
+                self.client.choose_next_edge('{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
+                agent.dest = next_node
+                print(agent)
                 agent.busy = True
                 choose.taken = True
-                print(self.agents.get(agent.id))
+                # print(self.agents.get(agent.id))
         self.client.move()
 
         # for agent in self.agents.values():

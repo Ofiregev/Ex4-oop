@@ -11,6 +11,9 @@ class pokemon:
         self.taken = False
         self.isDone = False
 
+    def __str__(self):
+        return f"(pokemon value: {self.value} pos: {self.pos} edge: {self.edge} taken: {self.taken} isDone: {self.isDone})"
+
 
 class agent:
     def __init__(self, a: SimpleNamespace):

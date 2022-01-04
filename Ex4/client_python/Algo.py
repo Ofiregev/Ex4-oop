@@ -59,14 +59,17 @@ class Algo:
             self.nodeQ.append({"id": t, "w": curr_w})
 
     def shortest_path(self, id1: int, id2: int,dest:int) -> (float, list):
-        if self.g.graphDict.get(id2) is None or self.g.graphDict.get(id1) is None:
+        if  self.g.graphDict.get(id1) is None:
             list = []
             list.append(float('inf'))
             list.append([])
             return list
         self.Dijkstra(id1)
+        list1 = []
         list2 = []
-        list2.append(id1)
+        print(self.g.getWeightOfEdge(id2,dest))
+        print(self.D.get(id2))
+        list1.append(self.D.get(id2)+self.g.getWeightOfEdge(id2,dest))
         list3=[]
         i = id2
         while (i != -1 and self.parent.get(i) != -1):
@@ -78,14 +81,15 @@ class Algo:
 
         list2.append(id2)
         list2.append(dest)
-        return list2
+        list1.append(list2)
+        return list1
 
 
     def time_to_take(self, speed:float, w:float ):
         return w/speed
 
     def min_price(self, agent:agent, pok_value,pok_w):
-       return pok_value/self.time_to_take(agent.speed,pok_w)
+       return pok_value/self.time_to_take(pok_w,agent.speed)
 
 
 
@@ -120,7 +124,7 @@ def main():
     a = Algo(t.get_graph())
     t.get_agents()
 
-    print(a.shortest_path(1,8,9))
+    print(a.shortest_path(0,9,8))
     ###
     # for i in a.edges:
     #     s = i.split(',')
