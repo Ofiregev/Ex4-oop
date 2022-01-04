@@ -1,7 +1,7 @@
 from math import inf
 
-import startGame
 import DiGraph
+import startGame
 
 
 class Algo:
@@ -106,13 +106,8 @@ class Algo:
                 if type == -1:
                     if src < dst:
                         return dst, src
-                    else:
-                        return src, dst
                 else:
-                    if src < dst:
                         return src, dst
-                    else:
-                        return dst, src
 
         # print(m)
 

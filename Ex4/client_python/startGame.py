@@ -1,4 +1,5 @@
 import json
+import time
 from types import SimpleNamespace
 
 import Algo
@@ -20,6 +21,10 @@ class startGame:
         HOST = '127.0.0.1'
         self.client = Client()
         self.client.start_connection(HOST, PORT)
+        self.client.add_agent("{\"id\":0}")
+        self.client.add_agent("{\"id\":1}")
+        self.client.add_agent("{\"id\":2}")
+        self.client.add_agent("{\"id\":3}")
 
     def load_json(self):
 
@@ -72,16 +77,21 @@ class startGame:
                 src = s[0]
                 dst = s[1]
                 if self.algo.distance(src, dst, sr, ds, p.type) is not None:
-                    ans = self.algo.distance(src, dst, sr, ds, p.type)
-            print(ans)
-            print(self.algo.shortest_path(1,int(ans[0]),int(ans[1])))
+                    ans = self.algo.distance(src, dst, sr, ds, int(p.type))
+                    self.station[0] = (self.algo.shortest_path(int(self.agents.get(0).src), int(ans[0]), int(ans[1])))
+                    self.station.get(0).pop(0)
+            print(self.station.get(0))
 
+    def main_loop(self):
+        self.client.start()
+        while self.client.is_running() == 'true':
+            self.get_agents()
+            self.get_pokemon()
+            self.next_station()
+            time.sleep(0.1)
+        print(self.client.get_info())
 
     def get_agents(self):
-        self.client.add_agent("{\"id\":0}")
-        self.client.add_agent("{\"id\":1}")
-        self.client.add_agent("{\"id\":2}")
-        self.client.add_agent("{\"id\":3}")
         agents = json.loads(self.client.get_agents(),
                             object_hook=lambda d: SimpleNamespace(**d)).Agents
         agents = [agent.Agent for agent in agents]
@@ -89,13 +99,33 @@ class startGame:
             self.agents[a.id] = a
             self.station[a.id] = []
 
+    def next_station(self):
+        # choose next edge
+        for agent in self.agents.values():
+            if int(agent.dest) == -1:
+                next_node = self.station.get(0).pop(0)
+                print(next_node, agent.dest)
+                self.client.choose_next_edge(
+                    '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
+                ttl = self.client.time_to_end()
+                print(ttl, self.client.get_info())
+                print(self.client.get_pokemons())
+                print(self.client.get_agents())
+
+
+        self.client.move()
+
 
 def main():
     g = DiGraph()
     t = startGame(g)
     t.load_json()
-    # t.get_pokemon()
     t.get_agents()
+    t.get_pokemon()
+    t.main_loop()
+
+
+
 
 
 
