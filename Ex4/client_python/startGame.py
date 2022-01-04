@@ -5,7 +5,7 @@ from types import SimpleNamespace
 import Algo
 from DiGraph import Node, Edge, DiGraph
 from client import Client
-import players
+from players import pokemon as pok
 
 
 class startGame:
@@ -66,19 +66,19 @@ class startGame:
                               object_hook=lambda d: SimpleNamespace(**d)).Pokemons
         pokemons = [p.Pokemon for p in pokemons]
         for p in pokemons:
-            self.pokemon[p.pos] = p
-        for p in self.pokemon.values():
-            w = p.pos.split(',')
-            sr = w[0]
-            ds = w[1]
-            for i in self.algo.edges:
-                s = i.split(',')
-                src = s[0]
-                dst = s[1]
-                if self.algo.distance(src, dst, sr, ds, p.type) is not None:
-                    ans = self.algo.distance(src, dst, sr, ds, int(p.type))
-                    self.station[0] = (self.algo.shortest_path(int(self.agents.get(0).src), int(ans[0]), int(ans[1])))
-                    self.station.get(0).pop(0)
+            if not self.pokemon.get(p.pos):
+                    w = p.pos.split(',')
+                    sr = w[0]
+                    ds = w[1]
+                    for i in self.algo.edges:
+                        s = i.split(',')
+                        src = s[0]
+                        dst = s[1]
+                        if self.algo.distance(src, dst, sr, ds, p.type) is not None:
+                            ans = self.algo.distance(src, dst, sr, ds, int(p.type))
+                            self.pokemon[p.pos] = pok(p,ans)
+                            print (self.pokemon.get(p.pos).edge)
+
 
     def main_loop(self):
         self.client.start()
@@ -116,8 +116,8 @@ def main():
     g = DiGraph()
     t = startGame(g)
     t.load_json()
-    t.get_agents()
-    # t.get_pokemon()
+    # t.get_agents()
+    t.get_pokemon()
     # t.main_loop()
 
 
