@@ -86,7 +86,6 @@ class Algo:
     def min_price(self, agent:agent, pok:list[pokemon]):
         min = inf
         for p in pok:
-            min  =
 
 
 
