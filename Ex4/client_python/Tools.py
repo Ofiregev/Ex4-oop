@@ -2,9 +2,9 @@ from types import SimpleNamespace
 
 
 class pokemon:
-    def __init__(self,p:SimpleNamespace):
+    def __init__(self,p:SimpleNamespace, e:list):
         self.info = p
-        self.edge =
+        self.edge = e
         self.taken_by = False
         self.isDone = False
 
