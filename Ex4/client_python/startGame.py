@@ -131,6 +131,7 @@ class startGame:
                               object_hook=lambda d: SimpleNamespace(**d)).Pokemons
         pokemons = [p.Pokemon for p in pokemons]
         for p in pokemons:
+            print(p)
             if p.pos == agent.pos:
                 p.isDone = False
                 p.taken = False
@@ -139,21 +140,27 @@ class startGame:
 
     def next_station(self):
         for a in self.agents.values():
+            print(1)
             if a.dest == -1 and not self.station.get(a.id):
                 if a.pos is not None:
+                    print(2)
                     self.check_catch(self.client.get_pokemons(), a)
                 a.busy = False
                 a.pos = None
                 self.find_pok(a)
 
             if a.dest == -1 and self.station.get(a.id):
+                print(3)
                 next_node = self.station.get(a.id).pop(0)
                 self.client.choose_next_edge(
                     '{"agent_id":' + str(a.id) + ', "next_node_id":' + str(next_node) + '}')
-                ttl = self.client.time_to_end()
-                print(ttl, self.client.get_info())
-                pok_list = self.client.get_pokemons()
-                print(pok_list)
+                # ttl = self.client.time_to_end()
+                # print(ttl, self.client.get_info())
+                # pok_list = self.client.get_pokemons()
+                # print(pok_list)
+                # print(a.info)
+
+
         self.client.move()
 
 

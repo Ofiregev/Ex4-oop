@@ -131,9 +131,7 @@ def main():
         s = i.split(',')
         src = s[0]
         dst = s[1]
-        print(a.distance(src, dst, 35.1992728373109,32.105605979924384, -1))
     res = a.shortest_path(2, 4, 3)
-    print(res)
 
 
 if __name__ == '__main__':
