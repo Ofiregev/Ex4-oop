@@ -25,4 +25,5 @@ class agent:
         self.busy = False
 
     def __str__(self):
-        return f"(agent id: {self.id} src: {self.src} dest: {self.dest} speed: {self.speed} busy: {self.busy} )"
+        return str(self.info)
+            # f"(agent id: {self.id} src: {self.src} dest: {self.dest} speed: {self.speed} busy: {self.busy} )"

@@ -77,8 +77,7 @@ class startGame:
                     if self.algo.distance(src, dst, sr, ds, p.type) is not None:
                         ans = self.algo.distance(src, dst, sr, ds, int(p.type))
                         self.pokemon[p.pos] = pok(p, ans)
-
-                        print(self.pokemon.get(p.pos).edge)
+                        print(f"add pokemon, {p}" )
 
     def main_loop(self):
         self.client.start()
@@ -96,25 +95,26 @@ class startGame:
         for a in agents:
             if self.agents.get(a.id) is None:
                 self.agents[a.id] = players.agent(a)
-                continue
+                print(f"add agent, {a}")
+            self.agents.get(a.id).dest = a.dest
+            self.agents.get(a.id).info = a
             if float(a.speed) != float(self.agents.get(a.id).speed):
                 self.agents.get(a.id).speed = a.speed
+                print(f" changing the speed to: {a.speed}")
                 continue
 
     def find_pok(self, agent: players.agent):
         min = 10000
         list1 = []
-        if agent.dest == -1 and not agent.busy:
-            for p in self.pokemon.values():
-                if p.taken:
-                    continue
-                w = (self.algo.shortest_path(agent.src, int(p.edge[0]), int(p.edge[1])))
-                # print(w)
-                res = self.algo.min_price(agent, p.value, w[0])
-                if min >= res:
-                    min = res
-                    choose = self.pokemon.get(p.pos)
-                    list1 = w
+        for p in self.pokemon.values():
+            if p.taken:
+                continue
+            w = (self.algo.shortest_path(agent.src, int(p.edge[0]), int(p.edge[1])))
+            res = self.algo.min_price(agent, p.value, w[0])
+            if min >= res:
+                min = res
+                choose = self.pokemon.get(p.pos)
+                list1 = w
             self.agents.get(agent.id).busy = True
             self.pokemon.get(choose.pos).taken = True
             self.station[agent.id] = list1[1]
@@ -132,17 +132,19 @@ class startGame:
                     next_node = self.station.get(agent.id).pop(0)
                     self.client.choose_next_edge(
                         '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
-                    agent.dest = next_node
-                    ttl = self.client.time_to_end()
-                    print(ttl, self.client.get_info())
-                    print(self.client.get_pokemons())
-                    print(self.client.get_agents())
-                    print(agent)
-                    continue
+                    agent.dest = agent.info.dest
+                    # ttl = self.client.time_to_end()
+                    # print(ttl, self.client.get_info())
+                    # print(self.client.get_pokemons())
+                    # print(self.client.get_agents())
+
                 else:
                     agent.busy = False
-
+            print(agent)
         self.client.move()
+        ttl = self.client.time_to_end()
+        print(ttl, self.client.get_info())
+        print(self.client.get_pokemons())
 
 
 def main():
