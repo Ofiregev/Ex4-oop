@@ -1,6 +1,5 @@
 import json
 import math
-import time
 from types import SimpleNamespace
 
 import Algo
@@ -83,11 +82,12 @@ class startGame:
     def main_loop(self):
         self.client.start()
         self.get_agents()
+        print(99)
         while self.client.is_running() == 'true':
             self.get_agents()
             self.get_pokemon()
             self.next_station()
-            time.sleep(0.1)
+            # time.sleep(0.1)
 
     def get_agents(self):
         agents = json.loads(self.client.get_agents(),
@@ -116,10 +116,11 @@ class startGame:
                     min = price
                     l = res[1]
                     pe = p
-        print(l)
+        if not l:
+            return
         l.pop(0)
-        print(l)
         pe.taken = True
+        agent.busy = True
         self.station[agent.id] = l
 
 
@@ -128,14 +129,14 @@ class startGame:
     def next_station(self):
         for agent in self.agents.values():
             if not agent.busy:
-                print("get out")
+                print("1")
                 self.find_pok(agent)
             if agent.dest == -1 and agent.busy and not self.station.get(agent.id):
-                print("get out")
+                print("2")
                 agent.busy = False
                 self.find_pok(agent)
             if agent.dest == -1 and agent.busy:
-                print("get in")
+                print("3")
                 if self.station.get(agent.id):
                     next_node = self.station.get(agent.id).pop(0)
                     self.client.choose_next_edge(
@@ -146,7 +147,7 @@ class startGame:
                     print(self.client.get_pokemons())
                     print(self.client.get_agents())
                 else:
-                    print("get out")
+                    print("4")
                     agent.busy = False
         self.client.move()
 
@@ -158,11 +159,7 @@ def main():
     t.load_json()
     t.get_agents()
     t.get_pokemon()
-    t.next_station()
-    t.next_station()
-    t.next_station()
-    t.next_station()
-    # t.main_loop()
+    t.main_loop()
 
 
 if __name__ == '__main__':
