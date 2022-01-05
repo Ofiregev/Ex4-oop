@@ -79,7 +79,6 @@ class startGame:
                     if self.algo.distance(src, dst, sr, ds, p.type) is not None:
                         ans = self.algo.distance(src, dst, sr, ds, int(p.type))
                         self.pokemon[p.pos] = pok(p, ans)
-                        print(f"add pokemon, {p}")
             else:
                 if self.pokemon.get(p.pos).isDone:
                     self.pokemon.pop(p.pos)
@@ -87,13 +86,12 @@ class startGame:
     def main_loop(self):
         self.client.start()
         self.get_agents()
-        print(99)
         while self.client.is_running() == 'true':
             self.get_agents()
             self.get_pokemon()
             self.next_station()
 
-            time.sleep(0.1)
+            time.sleep(0.098)
 
     def get_agents(self):
         agents = json.loads(self.client.get_agents(),
@@ -142,7 +140,6 @@ class startGame:
 
     def next_station(self):
         for a in self.agents.values():
-            print(a)
             if int(a.info.dest) == -1 and not self.station.get(a.id):
                 if a.pos is not None:
                     print(2)
@@ -152,7 +149,7 @@ class startGame:
                 self.find_pok(a)
 
             if int(a.info.dest) == -1 and self.station.get(a.id):
-                print(3)
+                print("--------------------------------------------------------------------------------")
                 next_node = self.station.get(a.id).pop(0)
                 self.client.choose_next_edge(
                     '{"agent_id":' + str(a.id) + ', "next_node_id":' + str(next_node) + '}')
@@ -160,7 +157,9 @@ class startGame:
                 print(ttl, self.client.get_info())
                 pok_list = self.client.get_pokemons()
                 print(pok_list)
-                # print(self.client.get_agents())
+                print(f"the next stations{self.station}")
+                print(self.pokemon.get(a.pos).edge)
+                print(self.client.get_agents())
 
         self.client.move()
 

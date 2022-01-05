@@ -1,11 +1,9 @@
-import pygame
-
 import json
-from types import SimpleNamespace
-
+import pygame
+import time
 from pygame import *
 from pygame import gfxdraw
-import time
+from types import SimpleNamespace
 
 
 class Gui:
@@ -17,13 +15,7 @@ class Gui:
         self.clock = pygame.time.Clock()
         pygame.font.init()
         FONT = pygame.font.SysFont('Arial', 20, bold=True)
-        pokemons = self.g.client.get_pokemons()
-        pokemons_obj = json.loads(pokemons, object_hook=lambda d: SimpleNamespace(**d))
-
-        print(pokemons)
-
         graph_json = self.g.client.get_graph()
-
         FONT = pygame.font.SysFont('Arial', 20, bold=True)
         # load the json string into SimpleNamespace Object
 
@@ -44,7 +36,7 @@ class Gui:
         self.max_x = max(list(graph.Nodes), key=lambda n: n.pos.x).pos.x
         self.max_y = max(list(graph.Nodes), key=lambda n: n.pos.y).pos.y
 
-        radius = 15
+        radius = 20
 
         self.g.client.start()
         while self.g.client.is_running() == 'true':
@@ -58,7 +50,6 @@ class Gui:
             agents = json.loads(self.g.client.get_agents(),
                                 object_hook=lambda d: SimpleNamespace(**d)).Agents
             agents = [agent.Agent for agent in agents]
-            print(agents)
             for a in agents:
                 x, y, _ = a.pos.split(',')
                 a.pos = SimpleNamespace(x=self.my_scale(
