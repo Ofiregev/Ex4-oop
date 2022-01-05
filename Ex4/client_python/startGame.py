@@ -118,6 +118,8 @@ class startGame:
                     min = price
                     l = res[1]
                     pe = p
+        if not l:
+            return
         l.pop(0)
         pe.taken = True
         agent.pos = pe.pos
