@@ -113,7 +113,7 @@ class Gui:
             self.g.get_agents()
             self.g.get_pokemon()
             self.g.next_station()
-            time.sleep(0.1)
+            self.clock.tick(60)
             display.update()
 
     def scale(self, data, min_screen, max_screen, min_data, max_data):
