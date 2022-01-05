@@ -107,15 +107,15 @@ class startGame:
 
 
     def find_pok(self, agent: players.agent):
-        min = math.inf
+        max = -math.inf
         l = []
         pe = None
         for p in self.pokemon.values():
             if not p.taken:
                 res = self.algo.shortest_path(int(agent.info.src), int(p.edge[0]), int(p.edge[1]))
-                price = self.algo.min_price(agent, p.value, res[0])
-                if min >= price:
-                    min = price
+                price = self.algo.max_price(agent, p.value, res[0])
+                if max <= price:
+                    max = price
                     l = res[1]
                     pe = p
         if not l:
