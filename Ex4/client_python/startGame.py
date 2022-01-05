@@ -6,6 +6,7 @@ from types import SimpleNamespace
 import Algo
 from DiGraph import Node, Edge, DiGraph
 from Ex4.client_python import players
+from Ex4.client_python.Gui import Gui
 from client import Client
 from players import pokemon as pok
 
@@ -91,6 +92,7 @@ class startGame:
             self.get_agents()
             self.get_pokemon()
             self.next_station()
+
             time.sleep(0.1)
 
     def get_agents(self):
@@ -170,7 +172,8 @@ def main():
     t.load_json()
     t.get_agents()
     t.get_pokemon()
-    t.main_loop()
+    Gui(t)
+    # t.main_loop()
 
 
 if __name__ == '__main__':
