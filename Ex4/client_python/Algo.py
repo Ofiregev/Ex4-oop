@@ -2,7 +2,7 @@ from math import inf
 
 import DiGraph
 import startGame
-from players import pokemon, agent
+from players import agent
 
 
 class Algo:
@@ -123,14 +123,17 @@ def main():
     t.load_json()
     a = Algo(t.get_graph())
     t.get_agents()
-
-    print(a.shortest_path(0,9,8))
-    ###
-    # for i in a.edges:
-    #     s = i.split(',')
-    #     src = s[0]
-    #     dst = s[1]
-    #     print(a.distance(src, dst, 35.197656770719604, 32.10191878639921, -1))
+    #
+    # print(a.shortest_path(0,9,8))
+    # res = self.algo.shortest_path(agent.src, int(p.edge[0]), int(p.edge[1]))
+    # ###
+    for i in a.edges:
+        s = i.split(',')
+        src = s[0]
+        dst = s[1]
+        print(a.distance(src, dst, 35.1992728373109,32.105605979924384, -1))
+    res = a.shortest_path(2, 4, 3)
+    print(res)
 
 
 if __name__ == '__main__':

@@ -23,6 +23,7 @@ class agent:
         self.speed = a.speed
         self.info = a
         self.busy = False
+        self.pos = None
 
     def __str__(self):
         return str(self.info)
