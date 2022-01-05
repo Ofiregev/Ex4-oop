@@ -83,17 +83,13 @@ class startGame:
     def main_loop(self):
         self.client.start()
         self.get_agents()
-        t = 200
-        while t:
-            mins, secs = divmod(t, 60)
-            timer = '{:02d}:{:02d}'.format(mins, secs)
+        while self.client.is_running() == 'true':
             self.get_agents()
             self.get_pokemon()
             self.next_station()
             time.sleep(0.1)
             # print(timer, end="\r")
             # time.sleep(1)
-            t -= 1
         # self.client.start()
         # while self.client.is_running() == 'true':
         #     self.get_agents()
@@ -106,14 +102,14 @@ class startGame:
                             object_hook=lambda d: SimpleNamespace(**d)).Agents
         agents = [agent.Agent for agent in agents]
         for a in agents:
-            if float(a.speed) != self.agents.get(a.id).spped:
-                self.agents.get(a.id).speed = a.speed
-                continue
             if self.agents.get(a.id) is None:
                 self.agents[a.id] = players.agent(a)
+                continue
+            if float(a.speed) != float(self.agents.get(a.id).speed):
+                self.agents.get(a.id).speed = a.speed
+                continue
 
-
-    def find_pok(self,agent:players.agent):
+    def find_pok(self, agent: players.agent):
         min = 10000
         list1 = []
         if agent.dest == -1 and not agent.busy:
@@ -131,7 +127,24 @@ class startGame:
             self.pokemon.get(choose.pos).taken = True
             self.station[agent.id] = list1[1]
             self.station.get(agent.id).pop(0)  # for the first time
+    def next_station(self):
+        for agent in self.agents.values():
+            if agent.dest == -1 and agent.busy:
+                if self.station.get(agent.id):
+                    next_node = self.station.get(agent.id).pop(0)
+                    self.client.choose_next_edge(
+                        '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
+                    agent.dest = next_node
+                    ttl = self.client.time_to_end()
+                    print(ttl, self.client.get_info())
+                    print(self.client.get_pokemons())
+                    print(self.client.get_agents())
+                    print(agent)
+                else:
+                    agent.busy = False
 
+                    ### add it to the list of unbusy agent and
+        self.client.move()
 
 
 def main():
@@ -144,4 +157,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+# main()
