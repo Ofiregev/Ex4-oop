@@ -173,7 +173,6 @@ def main():
     t.get_agents()
     t.get_pokemon()
     Gui(t)
-    # t.main_loop()
 
 
 if __name__ == '__main__':
