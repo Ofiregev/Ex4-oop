@@ -143,6 +143,7 @@ class startGame:
                     print(agent)
                 else:
                     agent.busy = False
+                    self.find_pok(agent)
 
                     ### add it to the list of unbusy agent and
         self.client.move()
