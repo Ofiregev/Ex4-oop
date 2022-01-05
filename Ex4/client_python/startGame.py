@@ -14,8 +14,8 @@ class startGame:
         self.g = g  ## the graph Type: Digraph
         self.algo = None
         self.pokemon = {}
-        self.agents ={}
-        self.station ={}
+        self.agents = {}
+        self.station = {}
         # default port
         PORT = 6666
         # server host (default localhost 127.0.0.1)
@@ -48,7 +48,6 @@ class startGame:
             y = s[1]
 
         self.algo = Algo.Algo(self.g)
-
 
     def get_graph(self) -> DiGraph:
         """
@@ -84,7 +83,7 @@ class startGame:
     def main_loop(self):
         self.client.start()
         self.get_agents()
-        t=200
+        t = 200
         while t:
             mins, secs = divmod(t, 60)
             timer = '{:02d}:{:02d}'.format(mins, secs)
@@ -93,7 +92,7 @@ class startGame:
             self.next_station()
             time.sleep(0.1)
             # print(timer, end="\r")
-            #time.sleep(1)
+            # time.sleep(1)
             t -= 1
         # self.client.start()
         # while self.client.is_running() == 'true':
@@ -116,7 +115,7 @@ class startGame:
     def next_station(self):
         # choose next edge
         min = 10000
-        list1 =[]
+        list1 = []
         for agent in self.agents.values():
             if agent.dest == -1 and not agent.busy:
                 # if agent.alloc == True and len(self.station.get(agent.id))!=0 :
@@ -137,7 +136,7 @@ class startGame:
                         continue
                     w = (self.algo.shortest_path(agent.src, int(p.edge[0]), int(p.edge[1])))
                     # print(w)
-                    res = self.algo.min_price(agent,p.value,w[0])
+                    res = self.algo.min_price(agent, p.value, w[0])
                     if min >= res:
                         min = res
                         choose = self.pokemon.get(p.pos)
@@ -150,11 +149,11 @@ class startGame:
                 self.agents.get(agent.id).alloc = True
                 self.station.get(agent.id).pop(0)
                 next_node = self.station.get(agent.id).pop(0)
-                self.client.choose_next_edge('{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
+                self.client.choose_next_edge(
+                    '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
                 agent.dest = next_node
                 self.agents.get(agent.id).busy = True
                 self.pokemon.get(choose.pos).taken = True
-
 
                 ttl = self.client.time_to_end()
                 print(ttl, self.client.get_info())
@@ -164,22 +163,15 @@ class startGame:
                 # print(self.agents.get(agent.id))
             self.client.move()
 
-
-
-
-
-
         # for agent in self.agents.values():
         #     if int(agent.dest) == -1:
         #         next_node = self.station.get(0).pop(0)
         #         self.client.choose_next_edge(
         #             '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
         #         ttl = self.client.time_to_end()
-                # print(ttl, self.client.get_info())
-                # print(self.client.get_pokemons())
-                # print(self.client.get_agents())
-
-
+        # print(ttl, self.client.get_info())
+        # print(self.client.get_pokemons())
+        # print(self.client.get_agents())
 
 
 def main():
@@ -189,7 +181,6 @@ def main():
     t.get_agents()
     t.get_pokemon()
     t.main_loop()
-
 
 
 if __name__ == '__main__':
