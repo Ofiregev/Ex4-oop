@@ -107,7 +107,7 @@ class Algo:
             # print(c)
             res = float(y) - m * float(x)
             # print(res)
-            if c - 0.000000001 <= res <= c + 0.000000001:
+            if c - 0.000000000001 <= res <= c + 0.000000000001:
                 if type == -1:
                     if src < dst:
                         return dst, src

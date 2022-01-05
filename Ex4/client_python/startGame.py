@@ -106,7 +106,7 @@ class startGame:
             if float(a.speed) != float(self.agents.get(a.id).speed):
                 self.agents.get(a.id).speed = a.speed
                 print(f" changing the speed to: {a.speed}")
-                continue
+
 
     def find_pok(self, agent: players.agent):
         min = math.inf
@@ -114,7 +114,7 @@ class startGame:
         pe = None
         for p in self.pokemon.values():
             if not p.taken:
-                res = self.algo.shortest_path(agent.src, int(p.edge[0]), int(p.edge[1]))
+                res = self.algo.shortest_path(int(agent.info.src), int(p.edge[0]), int(p.edge[1]))
                 price = self.algo.min_price(agent, p.value, res[0])
                 if min >= price:
                     min = price
@@ -140,8 +140,8 @@ class startGame:
 
     def next_station(self):
         for a in self.agents.values():
-            print(1)
-            if a.dest == -1 and not self.station.get(a.id):
+            print(a)
+            if int(a.info.dest) == -1 and not self.station.get(a.id):
                 if a.pos is not None:
                     print(2)
                     self.check_catch(self.client.get_pokemons(), a)
@@ -149,17 +149,16 @@ class startGame:
                 a.pos = None
                 self.find_pok(a)
 
-            if a.dest == -1 and self.station.get(a.id):
+            if int(a.info.dest) == -1 and self.station.get(a.id):
                 print(3)
                 next_node = self.station.get(a.id).pop(0)
                 self.client.choose_next_edge(
                     '{"agent_id":' + str(a.id) + ', "next_node_id":' + str(next_node) + '}')
-                # ttl = self.client.time_to_end()
-                # print(ttl, self.client.get_info())
-                # pok_list = self.client.get_pokemons()
-                # print(pok_list)
-                # print(a.info)
-
+                ttl = self.client.time_to_end()
+                print(ttl, self.client.get_info())
+                pok_list = self.client.get_pokemons()
+                print(pok_list)
+                # print(self.client.get_agents())
 
         self.client.move()
 
