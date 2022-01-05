@@ -4,12 +4,10 @@ OOP - Ex4
 Very simple GUI example for python client to communicates with the server and "play the game!"
 """
 import json
-from types import SimpleNamespace
-
 import pygame
 from pygame import *
 from pygame import gfxdraw
-
+from types import SimpleNamespace
 
 from client import Client
 
@@ -158,19 +156,8 @@ while client.is_running() == 'true':
     for p in pokemons:
         pygame.draw.circle(screen, Color(0, 255, 255), (int(p.pos.x), int(p.pos.y)), 10)
 
-    # update screen changes
     display.update()
 
-    # refresh rate
-    clock.tick(60)
-
-    # choose next edge
-    # g = DiGraph()
-    # t = startGame(g)
-    # t.load_json()
-    # t.get_agents()
-    # t.get_pokemon()
-    # t.main_loop()
 
     for agent in agents:
         if agent.dest == -1:
@@ -182,6 +169,8 @@ while client.is_running() == 'true':
             print(client.get_pokemons())
 
     client.move()
+    time.get_ticks(60)
+    display.update()
 # game over:
 
 

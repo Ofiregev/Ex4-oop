@@ -114,25 +114,3 @@ class Algo:
                 else:
                         return src, dst
 
-        # print(m)
-
-
-# def main():
-#     g = DiGraph.DiGraph()
-#     t = startGame.startGame(g)
-#     t.load_json()
-#     a = Algo(t.get_graph())
-#     t.get_agents()
-#     #
-#     # print(a.shortest_path(0,9,8))
-#     # res = self.algo.shortest_path(agent.src, int(p.edge[0]), int(p.edge[1]))
-#     # ###
-#     for i in a.edges:
-#         s = i.split(',')
-#         src = s[0]
-#         dst = s[1]
-#     res = a.shortest_path(2, 4, 3)
-
-
-# if __name__ == '__main__':
-#     main()

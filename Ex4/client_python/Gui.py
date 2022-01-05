@@ -108,12 +108,10 @@ class Gui:
 
             # refresh rate
             self.g.client.start()
-            # self.g.get_agents()
-            # while self.g.client.is_running() == 'true':
             self.g.get_agents()
             self.g.get_pokemon()
             self.g.next_station()
-            self.clock.tick(60)
+            time.sleep(0.1)
             display.update()
 
     def scale(self, data, min_screen, max_screen, min_data, max_data):

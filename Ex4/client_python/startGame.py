@@ -1,6 +1,5 @@
 import json
 import math
-import time
 from types import SimpleNamespace
 
 import Algo
@@ -91,7 +90,6 @@ class startGame:
             self.get_pokemon()
             self.next_station()
 
-            time.sleep(0.098)
 
     def get_agents(self):
         agents = json.loads(self.client.get_agents(),
@@ -126,30 +124,29 @@ class startGame:
         agent.busy = True
         self.station[agent.id] = l
 
-    def check_catch(self, pok_data:SimpleNamespace, agent:players.agent):
-        pokemons = json.loads(pok_data,
+    def check_catch(self, agent:players.agent):
+        pokemons = json.loads(self.client.get_pokemons(),
                               object_hook=lambda d: SimpleNamespace(**d)).Pokemons
         pokemons = [p.Pokemon for p in pokemons]
+        print(pokemons)
+        temp = {}
         for p in pokemons:
-            print(p)
-            if p.pos == agent.pos:
-                p.isDone = False
-                p.taken = False
-                return
-        self.pokemon.pop(agent.pos)
+            temp[p.pos] = self.pokemon.get(p.pos)
+        self.pokemon = temp
 
     def next_station(self):
         for a in self.agents.values():
             if int(a.info.dest) == -1 and not self.station.get(a.id):
                 if a.pos is not None:
                     print(2)
-                    self.check_catch(self.client.get_pokemons(), a)
+                    self.check_catch(a)
                 a.busy = False
                 a.pos = None
                 self.find_pok(a)
 
             if int(a.info.dest) == -1 and self.station.get(a.id):
                 print("--------------------------------------------------------------------------------")
+                print(a.info.dest)
                 next_node = self.station.get(a.id).pop(0)
                 self.client.choose_next_edge(
                     '{"agent_id":' + str(a.id) + ', "next_node_id":' + str(next_node) + '}')
@@ -157,10 +154,10 @@ class startGame:
                 print(ttl, self.client.get_info())
                 pok_list = self.client.get_pokemons()
                 print(pok_list)
+                print([p.info for p in self.pokemon.values()])
                 print(f"the next stations{self.station}")
                 print(self.pokemon.get(a.pos).edge)
                 print(self.client.get_agents())
-
         self.client.move()
 
 
@@ -172,6 +169,7 @@ def main():
     t.get_agents()
     t.get_pokemon()
     Gui(t)
+
 
 
 if __name__ == '__main__':
