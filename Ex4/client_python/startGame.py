@@ -88,14 +88,6 @@ class startGame:
             self.get_pokemon()
             self.next_station()
             time.sleep(0.1)
-            # print(timer, end="\r")
-            # time.sleep(1)
-        # self.client.start()
-        # while self.client.is_running() == 'true':
-        #     self.get_agents()
-        #     self.get_pokemon()
-        #     self.next_station()
-        #     time.sleep(0.1)
 
     def get_agents(self):
         agents = json.loads(self.client.get_agents(),
@@ -130,6 +122,11 @@ class startGame:
 
     def next_station(self):
         for agent in self.agents.values():
+            if not agent.busy:
+                self.find_pok(agent)
+            if agent.dest == -1 and agent.busy and not self.station.get(agent.id):
+                agent.busy = False
+                self.find_pok(agent)
             if agent.dest == -1 and agent.busy:
                 if self.station.get(agent.id):
                     next_node = self.station.get(agent.id).pop(0)
@@ -141,11 +138,10 @@ class startGame:
                     print(self.client.get_pokemons())
                     print(self.client.get_agents())
                     print(agent)
+                    continue
                 else:
                     agent.busy = False
-                    self.find_pok(agent)
 
-                    ### add it to the list of unbusy agent and
         self.client.move()
 
 
