@@ -78,15 +78,29 @@ class startGame:
                     if self.algo.distance(src, dst, sr, ds, p.type) is not None:
                         ans = self.algo.distance(src, dst, sr, ds, int(p.type))
                         self.pokemon[p.pos] = pok(p, ans)
+
                         print(self.pokemon.get(p.pos).edge)
 
     def main_loop(self):
         self.client.start()
-        while self.client.is_running() == 'true':
+        self.get_agents()
+        t=200
+        while t:
+            mins, secs = divmod(t, 60)
+            timer = '{:02d}:{:02d}'.format(mins, secs)
             self.get_agents()
             self.get_pokemon()
             self.next_station()
             time.sleep(0.1)
+            # print(timer, end="\r")
+            #time.sleep(1)
+            t -= 1
+        # self.client.start()
+        # while self.client.is_running() == 'true':
+        #     self.get_agents()
+        #     self.get_pokemon()
+        #     self.next_station()
+        #     time.sleep(0.1)
 
     def get_agents(self):
         agents = json.loads(self.client.get_agents(),
@@ -94,38 +108,66 @@ class startGame:
         agents = [agent.Agent for agent in agents]
         for a in agents:
             self.agents[a.id] = players.agent(a)
-            self.station[a.id] = []
-            print(self.agents[a.id])
+            if self.station.get(a.id) is not None:
+                a.alloc = True
+            # self.station[a.id] = []
+            # print(self.agents[a.id])
 
     def next_station(self):
         # choose next edge
         min = 10000
-        list1 = None
+        list1 =[]
         for agent in self.agents.values():
             if agent.dest == -1 and not agent.busy:
+                # if agent.alloc == True and len(self.station.get(agent.id))!=0 :
+                #         next_node = self.station.get(agent.id).pop(0)
+                #         self.client.choose_next_edge(
+                #             '{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
+                #         agent.dest = next_node
+                #         print(ttl, self.client.get_info())
+                #         print(self.client.get_pokemons())
+                #         print(self.client.get_agents())
+                #         print(agent)
+                #         self.client.move()
+                #
+                # else:
                 choose = pok
                 for p in self.pokemon.values():
                     if p.taken:
                         continue
                     w = (self.algo.shortest_path(agent.src, int(p.edge[0]), int(p.edge[1])))
-                    print(w)
+                    # print(w)
                     res = self.algo.min_price(agent,p.value,w[0])
                     if min >= res:
                         min = res
-                        # choose = p
+                        choose = self.pokemon.get(p.pos)
                         list1 = w
-                    print(list1)
+                    # print(list1)
                 # l =self.algo.shortest_path(agent.src,int(choose.edge[0]),int(choose.edge[1]))
-                list1[1].pop(0)
+                # print(list1[1])
+                # list1[1].pop(0)
                 self.station[agent.id] = list1[1]
-                next_node = self.station.get(0).pop(0)
+                self.agents.get(agent.id).alloc = True
+                self.station.get(agent.id).pop(0)
+                next_node = self.station.get(agent.id).pop(0)
                 self.client.choose_next_edge('{"agent_id":' + str(agent.id) + ', "next_node_id":' + str(next_node) + '}')
                 agent.dest = next_node
+                self.agents.get(agent.id).busy = True
+                self.pokemon.get(choose.pos).taken = True
+
+
+                ttl = self.client.time_to_end()
+                print(ttl, self.client.get_info())
+                # print(self.client.get_pokemons())
+                # print(self.client.get_agents())
                 print(agent)
-                agent.busy = True
-                choose.taken = True
                 # print(self.agents.get(agent.id))
-        self.client.move()
+            self.client.move()
+
+
+
+
+
 
         # for agent in self.agents.values():
         #     if int(agent.dest) == -1:

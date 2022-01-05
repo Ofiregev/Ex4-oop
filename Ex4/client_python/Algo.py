@@ -67,8 +67,8 @@ class Algo:
         self.Dijkstra(id1)
         list1 = []
         list2 = []
-        print(self.g.getWeightOfEdge(id2,dest))
-        print(self.D.get(id2))
+        # print(self.g.getWeightOfEdge(id2,dest))
+        # print(self.D.get(id2))
         list1.append(self.D.get(id2)+self.g.getWeightOfEdge(id2,dest))
         list3=[]
         i = id2
