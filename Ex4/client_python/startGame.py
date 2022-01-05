@@ -127,6 +127,7 @@ class startGame:
             self.pokemon.get(choose.pos).taken = True
             self.station[agent.id] = list1[1]
             self.station.get(agent.id).pop(0)  # for the first time
+
     def next_station(self):
         for agent in self.agents.values():
             if agent.dest == -1 and agent.busy:
@@ -157,4 +158,4 @@ def main():
 
 
 if __name__ == '__main__':
-# main()
+     main()
