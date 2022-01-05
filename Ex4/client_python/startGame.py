@@ -106,9 +106,13 @@ class startGame:
                             object_hook=lambda d: SimpleNamespace(**d)).Agents
         agents = [agent.Agent for agent in agents]
         for a in agents:
-            self.agents[a.id] = players.agent(a)
-            if self.station.get(a.id) is not None:
-                a.alloc = True
+            if float(a.speed) != self.agents.get(a.id).spped:
+                self.agents.get(a.id).speed = a.speed
+                continue
+            if self.agents.get(a.id) is None:
+                self.agents[a.id] = players.agent(a)
+            # if self.station.get(a.id) is not None:
+            #     a.alloc = True
             # self.station[a.id] = []
             # print(self.agents[a.id])
 
