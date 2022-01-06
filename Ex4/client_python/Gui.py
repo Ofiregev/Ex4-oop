@@ -1,3 +1,4 @@
+
 import json
 import pygame
 from pygame import *
@@ -102,6 +103,9 @@ class Gui:
             # draw pokemons (note: should differ (GUI wise) between the up and the down pokemons (currently they are marked in the same way).
             for p in pokemons:
                 pygame.draw.circle(self.screen, pygame.Color(0, 255, 255), (int(p.pos.x), int(p.pos.y)), 10)
+
+            # update screen changes
+            display.update()
 
             # refresh rate
             self.g.client.start()

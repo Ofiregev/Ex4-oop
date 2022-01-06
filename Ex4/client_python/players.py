@@ -2,12 +2,12 @@ from types import SimpleNamespace
 
 
 class pokemon:
-    def __init__(self, p: SimpleNamespace, e: list):
+    def __init__(self, p, e: list):
         self.info = p
-        self.value = p.value
-        self.pos = p.pos
+        self.value = p.get("Pokemon").get("value")
+        self.pos = p.get("Pokemon").get("pos")
         self.edge = e
-        self.type = p.type
+        self.type = p.get("Pokemon").get("type")
         self.taken = False
         self.isDone = False
 
@@ -16,11 +16,11 @@ class pokemon:
 
 
 class agent:
-    def __init__(self, a: SimpleNamespace):
-        self.id = a.id
-        self.src = a.src
-        self.dest = a.dest
-        self.speed = a.speed
+    def __init__(self, a):
+        self.id = a.get("Agent").get("id")
+        self.src = a.get("Agent").get("src")
+        self.dest = a.get("Agent").get("dest")
+        self.speed = a.get("Agent").get("speed")
         self.info = a
         self.busy = False
         self.pos = 0

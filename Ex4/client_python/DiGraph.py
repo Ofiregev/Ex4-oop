@@ -72,12 +72,10 @@ class DiGraph:
             self.graphDict[node_id] = node
             return True
         list = {}
-
         if type(pos) is str:
             list["pos"] = pos
             list["id"] = node_id
-            s = SimpleNamespace(**list)
-            node = Node(s)
+            node = Node(list)
             self.graphDict[node_id] = node
             return True
         s = str(pos[0])
@@ -142,10 +140,10 @@ class DiGraph:
         return s[1]
 
 class Edge:
-    def __init__(self, list:SimpleNamespace):
-        self.src = list.__dict__.get("src")
-        self.w = list.__dict__.get("w")
-        self.dest = list.__dict__.get("dest")
+    def __init__(self, list):
+        self.src = list["src"]
+        self.w = list["w"]
+        self.dest = list["dest"]
 
     def __repr__(self):
         return f"src: {self.src} dst: {self.dest} wight: {self.w}"
@@ -155,9 +153,9 @@ class Edge:
 
 
 class Node:
-    def __init__(self, list:SimpleNamespace):
-        self.id = list.__dict__.get("id")
-        self.pos = list.__dict__.get("pos")
+    def __init__(self, list):
+        self.id = list["id"]
+        self.pos = list["pos"]
         self.inEdge = {}  # this is dic of edge into our node <"other node.id",w>
         self.outEdge = {}  # this is dic of edge from our node <"other node.id",w>
 

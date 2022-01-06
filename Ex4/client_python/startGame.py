@@ -13,7 +13,7 @@ from players import pokemon as pok
 class startGame:
     def __init__(self, g: DiGraph):
         self.g = g  ## the graph Type: Digraph
-        self.algo = None
+        self.algo = Algo.Algo(g)
         self.pokemon = {}
         self.agents = {}
         self.station = {}
@@ -31,22 +31,20 @@ class startGame:
     def load_json(self):
 
         graph_json = self.client.get_graph()
-        graph = json.loads(graph_json, object_hook=lambda json_dict: SimpleNamespace(**json_dict))
+        graph_obj = json.loads(graph_json)
+        nodes = graph_obj["Nodes"]
+        edge = graph_obj["Edges"]
         Nodes = []
         Edges = []
-        for n in graph.Nodes:
+
+        for n in nodes:
             Nodes.append(Node(n))
-        for e in graph.Edges:
+        for e in edge:
             Edges.append(Edge(e))
         for i in Nodes:
             self.g.add_node(i.id, i.pos)
         for i in Edges:
             self.g.add_edge(i.src, i.dest, i.w)
-
-        for n in Nodes:
-            s = n.pos.split(',')
-            x = s[0]
-            y = s[1]
 
         self.algo = Algo.Algo(self.g)
 
@@ -56,31 +54,29 @@ class startGame:
         """
         return self.g
 
-    def is_nei(self, id: int):
-        list = []
-        for i in self.g.graphDict.get(id).outEdge:
-            list.append(self.g.graphDict.get(id).outEdge.get(i))
-        return list
-
     def get_pokemon(self):
-        pokemons = json.loads(self.client.get_pokemons(),
-                              object_hook=lambda d: SimpleNamespace(**d)).Pokemons
-        pokemons = [p.Pokemon for p in pokemons]
+        pokemons_json= self.client.get_pokemons()
+        pokemon_obj = json.loads(pokemons_json)
+        print(pokemon_obj)
+        pokemons = pokemon_obj["Pokemons"]
+        print(pokemons)
+        # pokemons = [p.Pokemon for p in pokemons]
         for p in pokemons:
-            if not self.pokemon.get(p.pos):
-                w = p.pos.split(',')
+            if not self.pokemon.get(p.get("Pokemon").get("pos")):
+                w = p.get("Pokemon").get("pos").split(',')
                 sr = w[0]
                 ds = w[1]
+                print(self.algo.edges)
                 for i in self.algo.edges:
                     s = i.split(',')
                     src = s[0]
                     dst = s[1]
-                    if self.algo.distance(src, dst, sr, ds, p.type) is not None:
-                        ans = self.algo.distance(src, dst, sr, ds, int(p.type))
-                        self.pokemon[p.pos] = pok(p, ans)
+                    if self.algo.distance(src, dst, sr, ds, p.get("Pokemon").get("type")) is not None:
+                        ans = self.algo.distance(src, dst, sr, ds, int(p.get("Pokemon").get("type")))
+                        self.pokemon[p.get("Pokemon").get("pos")] = pok(p, ans)
             else:
-                if self.pokemon.get(p.pos).isDone:
-                    self.pokemon.pop(p.pos)
+                if self.pokemon.get(p.get("Pokemon").get("pos")).isDone:
+                    self.pokemon.pop(p.get("Pokemon").get("pos"))
 
     def main_loop(self):
         self.client.start()
@@ -92,18 +88,22 @@ class startGame:
 
 
     def get_agents(self):
-        agents = json.loads(self.client.get_agents(),
-                            object_hook=lambda d: SimpleNamespace(**d)).Agents
-        agents = [agent.Agent for agent in agents]
+        # p.get("Pokemon").get("pos")
+        agents_json = self.client.get_agents()
+        agents_obj = json.loads(agents_json)
+        agents = agents_obj["Agents"]
+        print(agents)
+        # pokemons = [p.Pokemon for p in pokemons]
         for a in agents:
-            if self.agents.get(a.id) is None:
-                self.agents[a.id] = players.agent(a)
+            print("OK")
+            if self.agents.get(a.get("Agent").get("id")) is None:
+                self.agents[a.get("Agent").get("id")] = players.agent(a)
                 print(f"add agent, {a}")
-            self.agents.get(a.id).dest = a.dest
-            self.agents.get(a.id).info = a
-            if float(a.speed) != float(self.agents.get(a.id).speed):
-                self.agents.get(a.id).speed = a.speed
-                print(f" changing the speed to: {a.speed}")
+            self.agents.get(a.get("Agent").get("id")).dest = a.get("Agent").get("dest")
+            self.agents.get(a.get("Agent").get("id")).info = a
+            if float(a.get("Agent").get("speed")) != float(self.agents.get(a.get("Agent").get("id")).speed):
+                self.agents.get(a.get("Agent").get("id")).speed = a.get("Agent").get("speed")
+                # print(f" changing the speed to: {a.get("Agent").get("speed"))}")
 
 
     def find_pok(self, agent: players.agent):
@@ -112,7 +112,7 @@ class startGame:
         pe = None
         for p in self.pokemon.values():
             if not p.taken:
-                res = self.algo.shortest_path(int(agent.info.src), int(p.edge[0]), int(p.edge[1]))
+                res = self.algo.shortest_path(agent.info.get("Agent").get("src"), int(p.edge[0]), int(p.edge[1]))
                 price = self.algo.min_price(agent, p.value, res[0])
                 # print(f"res = {res}  min = {min} , price = {price}")
                 if min >= price:
@@ -143,7 +143,8 @@ class startGame:
 
     def next_station(self):
         for a in self.agents.values():
-            if int(a.info.dest) == -1:
+            print(a)
+            if int(a.dest) == -1:
                 if self.pokemon.get(a.pos):
                     self.pokemon.get(a.pos).taken = False
                 self.check_catch()
@@ -180,12 +181,18 @@ class startGame:
 
 
 
-
-
-
+# #
+# #
+# #
 def main():
     g = DiGraph()
     t = startGame(g)
+    # t.g.add_node(0)
+    # t.g.add_node(1)
+    # t.g.add_node(2)
+    # t.g.add_edge(0, 1, 1)
+    # t.g.add_edge(1, 2, 4)
+    # t.algo.shortest_path(0,1,2)
     t.load_json()
     t.get_agents()
     t.get_pokemon()

@@ -169,7 +169,7 @@ while client.is_running() == 'true':
             print(client.get_pokemons())
 
     client.move()
-    time.get_ticks(60)
+    time.get_ticks()
     display.update()
 # game over:
 
