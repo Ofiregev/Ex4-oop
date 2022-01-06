@@ -1,10 +1,10 @@
 
 import json
 import pygame
+import time
 from pygame import *
 from pygame import gfxdraw
 from types import SimpleNamespace
-import time
 
 
 class Gui:
@@ -19,7 +19,7 @@ class Gui:
         graph_json = self.g.client.get_graph()
         FONT = pygame.font.SysFont('Arial', 20, bold=True)
         # load the json string into SimpleNamespace Object
-
+        my_image = pygame.image.load('pok.jpg')
         graph = json.loads(
             graph_json, object_hook=lambda json_dict: SimpleNamespace(**json_dict))
 
@@ -63,6 +63,7 @@ class Gui:
 
             # refresh surface
             self.screen.fill(pygame.Color(0, 0, 0))
+            self.screen.blit(my_image, (self.screen.get_width()/2 - 350, self.screen.get_height()/2 - 200))
 
             # draw nodes
             for n in graph.Nodes:
