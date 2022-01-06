@@ -17,13 +17,14 @@ class startGame:
         self.pokemon = {}
         self.agents = {}
         self.station = {}
+        self.value = {}
         # default port
         PORT = 6666
         # server host (default localhost 127.0.0.1)
         HOST = '127.0.0.1'
         self.client = Client()
         self.client.start_connection(HOST, PORT)
-        self.client.add_agent("{\"id\":9}")
+        self.client.add_agent("{\"id\":1}")
         self.client.add_agent("{\"id\":4}")
         self.client.add_agent("{\"id\":10}")
         self.client.add_agent("{\"id\":0}")
@@ -110,6 +111,12 @@ class startGame:
                     min = price
                     l = res[1]
                     pe = p
+
+        # for p in self.pokemon.values():
+        #     if p.taken and int(p.edge[0]) -int(pe.edge[0]) < 2:
+        #         num = (random.choice(list(self.g.all_out_edges_of_node(agent.src))))
+        #         self.station[agent.id] = [num, random.choice(list(self.g.all_out_edges_of_node(num)))]
+        #         return
         if not l:
             print("shit happend")
             return
@@ -119,7 +126,6 @@ class startGame:
         agent.pos = pe.pos
         agent.busy = True
         self.station[agent.id] = l
-        return res[0]
 
     def check_catch(self):
         pokemons = json.loads(self.client.get_pokemons(),
@@ -138,6 +144,8 @@ class startGame:
                         self.pokemon.get(a.pos).taken = False
                     self.check_catch()
                     self.find_pok(a)
+                    if not self.station.get(a.id):
+                        continue
                     print("--------------------------------------------------------------------------------")
                     next_node = self.station.get(a.id).pop(0)
                     self.client.choose_next_edge(
@@ -148,7 +156,6 @@ class startGame:
                     print(pok_list)
                     print([p.info for p in self.pokemon.values()])
                     print(f"the next stations{self.station}")
-                    print(self.pokemon.get(a.pos).edge)
                     print(self.client.get_agents())
 
             self.client.move()

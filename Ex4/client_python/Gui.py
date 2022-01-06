@@ -1,4 +1,3 @@
-
 import json
 import pygame
 import time
@@ -99,7 +98,7 @@ class Gui:
 
             # draw agents
             for agent in agents:
-                pygame.draw.circle(self.screen, pygame.Color(122, 61, 23),
+                pygame.draw.circle(self.screen, pygame.Color(255, 255, 0),
                                    (int(agent.pos.x), int(agent.pos.y)), 10)
             # draw pokemons (note: should differ (GUI wise) between the up and the down pokemons (currently they are marked in the same way).
             for p in pokemons:
