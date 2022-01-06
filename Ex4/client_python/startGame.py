@@ -107,26 +107,31 @@ class startGame:
 
 
     def find_pok(self, agent: players.agent):
-        min = math.inf
+        min =  math.inf
         l = []
         pe = None
         for p in self.pokemon.values():
             if not p.taken:
                 res = self.algo.shortest_path(int(agent.info.src), int(p.edge[0]), int(p.edge[1]))
                 price = self.algo.min_price(agent, p.value, res[0])
+                # print(f"res = {res}  min = {min} , price = {price}")
                 if min >= price:
                     min = price
                     l = res[1]
                     pe = p
+                    # print(f"min = {min} , pre is :{l}")
         if not l:
+            print("shit happend")
             return
+
         l.pop(0)
         pe.taken = True
         agent.pos = pe.pos
         agent.busy = True
         self.station[agent.id] = l
+        return res[0]
 
-    def check_catch(self, agent:players.agent):
+    def check_catch(self):
         pokemons = json.loads(self.client.get_pokemons(),
                               object_hook=lambda d: SimpleNamespace(**d)).Pokemons
         pokemons = [p.Pokemon for p in pokemons]
@@ -138,29 +143,43 @@ class startGame:
 
     def next_station(self):
         for a in self.agents.values():
-            if int(a.info.dest) == -1 and not self.station.get(a.id):
-                if a.pos is not None:
-                    print(2)
-                    self.check_catch(a)
-                a.busy = False
-                a.pos = None
-                self.find_pok(a)
-
-            if int(a.info.dest) == -1 and self.station.get(a.id):
-                print("--------------------------------------------------------------------------------")
-                print(a.info.dest)
+            if int(a.info.dest) == -1:
+                if self.pokemon.get(a.pos):
+                    self.pokemon.get(a.pos).taken = False
+                self.check_catch()
+                pot = self.find_pok(a)
                 next_node = self.station.get(a.id).pop(0)
                 self.client.choose_next_edge(
                     '{"agent_id":' + str(a.id) + ', "next_node_id":' + str(next_node) + '}')
                 ttl = self.client.time_to_end()
                 print(ttl, self.client.get_info())
-                pok_list = self.client.get_pokemons()
-                print(pok_list)
-                print([p.info for p in self.pokemon.values()])
-                print(f"the next stations{self.station}")
-                print(self.pokemon.get(a.pos).edge)
-                print(self.client.get_agents())
+                continue
+
+            #
+            # if int(a.info.dest) == -1 and not self.station.get(a.id):
+            #     self.check_catch()
+            #     a.busy = False
+            #     a.pos = None
+            #     self.find_pok(a)
+            #
+            # if int(a.info.dest) == -1 and self.station.get(a.id):
+            #     print("--------------------------------------------------------------------------------")
+            #     next_node = self.station.get(a.id).pop(0)
+            #     self.client.choose_next_edge(
+            #         '{"agent_id":' + str(a.id) + ', "next_node_id":' + str(next_node) + '}')
+            #     print(a.info.dest)
+            #     ttl = self.client.time_to_end()
+            #     print(ttl, self.client.get_info())
+            #     pok_list = self.client.get_pokemons()
+            #     print(pok_list)
+            #     print([p.info for p in self.pokemon.values()])
+            #     print(f"the next stations{self.station}")
+            #     print(self.pokemon.get(a.pos).edge)
+            #     print(self.client.get_agents())
         self.client.move()
+
+
+
 
 
 

@@ -89,7 +89,7 @@ class Algo:
         return w/speed
 
     def min_price(self, agent:agent, pok_value,pok_w):
-       return pok_value/self.time_to_take(pok_w,agent.speed)
+       return pok_value / self.time_to_take(pok_w,agent.speed)
 
 
 

@@ -103,9 +103,6 @@ class Gui:
             for p in pokemons:
                 pygame.draw.circle(self.screen, pygame.Color(0, 255, 255), (int(p.pos.x), int(p.pos.y)), 10)
 
-            # update screen changes
-            display.update()
-
             # refresh rate
             self.g.client.start()
             self.g.get_agents()
