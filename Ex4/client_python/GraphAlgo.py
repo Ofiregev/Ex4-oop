@@ -1,10 +1,10 @@
 import copy
 import json
-import time
+import timeit
 from math import inf
+
 import Gui
 from DiGraph import Node, Edge, DiGraph
-import timeit
 
 
 class GraphAlgo:
