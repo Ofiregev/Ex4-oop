@@ -37,12 +37,12 @@ class Gui:
         self.max_x = max(list(graph.Nodes), key=lambda n: n.pos.x).pos.x
         self.max_y = max(list(graph.Nodes), key=lambda n: n.pos.y).pos.y
 
-        buttonColor = (28, 172, 74)
+        buttonColor = (242, 8, 8)
         buttonWidth = 70
         self.exit_button = Button(buttonColor, 2, 2, buttonWidth, 20, 'EXIT')
-        self.move_button = Button(buttonColor, 2 + 2 * buttonWidth, 2, buttonWidth, 20, 'MOVES')
-        self.time_button = Button(buttonColor, 2 + 3 * buttonWidth, 2, buttonWidth, 20, 'TIME')
-        self.grade_button = Button(buttonColor, 2 + 4 * buttonWidth, 2, buttonWidth, 20, 'GRADE')
+        self.move_button = Button(buttonColor, 2 + 1 * buttonWidth, 2, buttonWidth, 20, 'MOVES')
+        self.time_button = Button(buttonColor, 2 + 2 * buttonWidth, 2, buttonWidth, 20, 'TIME')
+        self.grade_button = Button(buttonColor, 2 + 3 * buttonWidth, 2, buttonWidth, 20, 'GRADE')
         self.isPLay = 0
 
 
@@ -69,10 +69,10 @@ class Gui:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit(0)
-                if self.exit_button.isOver(mouse.get_pressed(3)):
-                    pygame.quit()
-                    exit(0)
-
+                # if self.exit_button.isOver(mouse.get_pressed(3)):
+                #     pygame.quit()
+                #     exit(0)
+                #
 
 
 
@@ -129,7 +129,7 @@ class Gui:
             self.g.get_agents()
             self.g.get_pokemon()
             self.g.next_station()
-            time.sleep(0.1)
+            time.sleep(0.09)
             self.drawButtons()
             display.update()
 
@@ -180,13 +180,13 @@ class Button():
             win.blit(text, (
             self.x + (self.width / 2 - text.get_width() / 2), self.y + (self.height / 2 - text.get_height() / 2)))
 
-    def isOver(self, pos):
-        # Pos is the mouse position or a tuple of (x,y) coordinates
-        if pos[0] > self.x and pos[0] < self.x + self.width:
-            if pos[1] > self.y and pos[1] < self.y + self.height:
-                return True
-
-        return False
+    # def isOver(self, pos):
+    #     # Pos is the mouse position or a tuple of (x,y) coordinates
+    #     if pos[0] > self.x and pos[0] < self.x + self.width:
+    #         if pos[1] > self.y and pos[1] < self.y + self.height:
+    #             return True
+    #
+    #     return False
 
     """
     The code below should be improved significantly:
