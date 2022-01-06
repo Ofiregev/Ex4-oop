@@ -1,10 +1,9 @@
 import json
 import pygame
-
+import time
 from pygame import *
 from pygame import gfxdraw
 from types import SimpleNamespace
-import time
 
 
 class Gui:
@@ -69,10 +68,10 @@ class Gui:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit(0)
-                # if self.exit_button.isOver(mouse.get_pressed(3)):
-                #     pygame.quit()
-                #     exit(0)
-                #
+                if event.type == pygame.MOUSEBUTTONDOWN and self.exit_button.isOver():
+                    pygame.quit()
+                    exit(0)
+
 
 
 
@@ -171,24 +170,18 @@ class Button():
         # Call this method to draw the button on the screen
         if outline:
             pygame.draw.rect(win, outline, (self.x - 2, self.y - 2, self.width + 4, self.height + 4), 0)
-
         pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height), 0)
 
         if self.text != '':
-            font = pygame.font.SysFont('comicsans', 10)
+            font = pygame.font.SysFont('arial', 10)
             text = font.render(self.text, 1, (0, 0, 0))
             win.blit(text, (
             self.x + (self.width / 2 - text.get_width() / 2), self.y + (self.height / 2 - text.get_height() / 2)))
 
-    # def isOver(self, pos):
-    #     # Pos is the mouse position or a tuple of (x,y) coordinates
-    #     if pos[0] > self.x and pos[0] < self.x + self.width:
-    #         if pos[1] > self.y and pos[1] < self.y + self.height:
-    #             return True
-    #
-    #     return False
+    def isOver(self, pos):
+        # Pos is the mouse position or a tuple of (x,y) coordinates
+        if self.x < pos[0] < self.x + self.width:
+            if self.y < pos[1] < self.y + self.height:
+                return True
 
-    """
-    The code below should be improved significantly:
-    The GUI and the "algo" are mixed - refactoring using MVC design pattern is required.
-    """
+        return False
