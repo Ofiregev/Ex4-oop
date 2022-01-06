@@ -17,7 +17,6 @@ class startGame:
         self.pokemon = {}
         self.agents = {}
         self.station = {}
-        self.value = {}
         # default port
         PORT = 6666
         # server host (default localhost 127.0.0.1)
@@ -56,7 +55,7 @@ class startGame:
         return self.g
 
     def get_pokemon(self):
-        pokemons_json = self.client.get_pokemons()
+        pokemons_json= self.client.get_pokemons()
         pokemon_obj = json.loads(pokemons_json)
         pokemons = pokemon_obj["Pokemons"]
         # pokemons = [p.Pokemon for p in pokemons]
@@ -100,7 +99,7 @@ class startGame:
 
 
     def find_pok(self, agent: players.agent):
-        min =  math.inf
+        min = math.inf
         l = []
         pe = None
         for p in self.pokemon.values():
