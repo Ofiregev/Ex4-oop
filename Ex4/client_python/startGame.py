@@ -85,7 +85,6 @@ class startGame:
 
 
     def get_agents(self):
-        # p.get("Pokemon").get("pos")
         agents_json = self.client.get_agents()
         agents_obj = json.loads(agents_json)
         agents = agents_obj["Agents"]
@@ -110,10 +109,7 @@ class startGame:
                     min = price
                     l = res[1]
                     pe = p
-        if not l:
-            print("shit happend")
-            return
-        print(f"@@@@ the choise is pokemone value: {pe.value} and the way cost will cost: {min}, the speed of the agent is {agent.speed}")
+
         l.pop(0)
         pe.taken = True
         agent.pos = pe.pos
@@ -148,7 +144,6 @@ class startGame:
                     print(pok_list)
                     print([p.info for p in self.pokemon.values()])
                     print(f"the next stations{self.station}")
-                    print(self.pokemon.get(a.pos).edge)
                     print(self.client.get_agents())
 
             self.client.move()
