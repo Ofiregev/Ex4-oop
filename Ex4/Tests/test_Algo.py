@@ -14,13 +14,10 @@ class Tests(unittest.TestCase):
 ##Digraph tests
     def test_add(self):
         g = DiGraph()
-        c = g.add_node(1, ("2", "2", "2"))
         cc = g.add_node(1, ("2", "2", "3"))
-        self.assertFalse(cc)
+        self.assertTrue(cc)
         v = g.graphDict[1]
         self.assertEqual(g.graphDict[1], v)
-
-    # def read_from_json(self):
 
     def test_remove_node(self):
         g = DiGraph()
@@ -110,6 +107,23 @@ class Tests(unittest.TestCase):
         a = players.agent(test_agent)
         print(graphAlgo.min_price(a,1,2))
         self.assertEqual(2,graphAlgo.min_price(a,1,2))
-        print("maid it")
+
+    def test_time_to_take(self):
+        g = DiGraph()
+        graphAlgo = Algo(g)
+        w = 10
+        s = 5
+        self.assertEqual(2,graphAlgo.time_to_take(s,w))
+
+    def test_dist(self):
+        g = DiGraph()
+        graphAlgo = Algo(g)
+        graphAlgo.load_json_file(r"C:\Users\avi44\PycharmProjects\Ex4-oop\Ex4\data\check_graph.json")
+        pok_pos_x=35.1875942163034
+        pok_pos_y=32.103782258823
+        type1 = 1
+        self.assertEqual(('14', '15'),graphAlgo.distance("14","15",pok_pos_x,pok_pos_y,type1))
+
+
 
 

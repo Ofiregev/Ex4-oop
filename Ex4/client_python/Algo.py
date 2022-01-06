@@ -44,6 +44,14 @@ class Algo:
         for i in Edges:
             self.g.add_edge(i.src, i.dest, i.w)
 
+        self.edges = {}
+        for i in self.graphDict.values():
+            for j in i.outEdge:
+                s = ""
+                s = s + str(i.id) + ","
+                s = s + str(j)
+                self.edges[s] = self.graphDict.get(i.id).outEdge.get(j)
+
         return True
 
 
