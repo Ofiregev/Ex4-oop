@@ -24,9 +24,9 @@ class startGame:
         self.client = Client()
         self.client.start_connection(HOST, PORT)
         self.client.add_agent("{\"id\":9}")
-        self.client.add_agent("{\"id\":1}")
-        self.client.add_agent("{\"id\":2}")
-        self.client.add_agent("{\"id\":3}")
+        self.client.add_agent("{\"id\":4}")
+        self.client.add_agent("{\"id\":10}")
+        self.client.add_agent("{\"id\":0}")
 
     def load_json(self):
 
@@ -57,16 +57,13 @@ class startGame:
     def get_pokemon(self):
         pokemons_json= self.client.get_pokemons()
         pokemon_obj = json.loads(pokemons_json)
-        print(pokemon_obj)
         pokemons = pokemon_obj["Pokemons"]
-        print(pokemons)
         # pokemons = [p.Pokemon for p in pokemons]
         for p in pokemons:
             if not self.pokemon.get(p.get("Pokemon").get("pos")):
                 w = p.get("Pokemon").get("pos").split(',')
                 sr = w[0]
                 ds = w[1]
-                print(self.algo.edges)
                 for i in self.algo.edges:
                     s = i.split(',')
                     src = s[0]
@@ -92,38 +89,31 @@ class startGame:
         agents_json = self.client.get_agents()
         agents_obj = json.loads(agents_json)
         agents = agents_obj["Agents"]
-        print(agents)
-        # pokemons = [p.Pokemon for p in pokemons]
         for a in agents:
-            print("OK")
             if self.agents.get(a.get("Agent").get("id")) is None:
                 self.agents[a.get("Agent").get("id")] = players.agent(a)
-                print(f"add agent, {a}")
             self.agents.get(a.get("Agent").get("id")).dest = a.get("Agent").get("dest")
             self.agents.get(a.get("Agent").get("id")).info = a
             if float(a.get("Agent").get("speed")) != float(self.agents.get(a.get("Agent").get("id")).speed):
                 self.agents.get(a.get("Agent").get("id")).speed = a.get("Agent").get("speed")
-                # print(f" changing the speed to: {a.get("Agent").get("speed"))}")
 
 
     def find_pok(self, agent: players.agent):
-        min =  math.inf
+        min = math.inf
         l = []
         pe = None
         for p in self.pokemon.values():
             if not p.taken:
                 res = self.algo.shortest_path(agent.info.get("Agent").get("src"), int(p.edge[0]), int(p.edge[1]))
                 price = self.algo.min_price(agent, p.value, res[0])
-                # print(f"res = {res}  min = {min} , price = {price}")
-                if min >= price:
+                if min > price:
                     min = price
                     l = res[1]
                     pe = p
-                    # print(f"min = {min} , pre is :{l}")
         if not l:
             print("shit happend")
             return
-
+        print(f"@@@@ the choise is pokemone value: {pe.value} and the way cost will cost: {min}, the speed of the agent is {agent.speed}")
         l.pop(0)
         pe.taken = True
         agent.pos = pe.pos
@@ -142,57 +132,33 @@ class startGame:
         self.pokemon = temp
 
     def next_station(self):
-        for a in self.agents.values():
-            print(a)
-            if int(a.dest) == -1:
-                if self.pokemon.get(a.pos):
-                    self.pokemon.get(a.pos).taken = False
-                self.check_catch()
-                pot = self.find_pok(a)
-                next_node = self.station.get(a.id).pop(0)
-                self.client.choose_next_edge(
-                    '{"agent_id":' + str(a.id) + ', "next_node_id":' + str(next_node) + '}')
-                ttl = self.client.time_to_end()
-                print(ttl, self.client.get_info())
-                continue
+            for a in self.agents.values():
+                if int(a.dest) == -1:
+                    if self.pokemon.get(a.pos):
+                        self.pokemon.get(a.pos).taken = False
+                    self.check_catch()
+                    self.find_pok(a)
+                    print("--------------------------------------------------------------------------------")
+                    next_node = self.station.get(a.id).pop(0)
+                    self.client.choose_next_edge(
+                        '{"agent_id":' + str(a.id) + ', "next_node_id":' + str(next_node) + '}')
+                    ttl = self.client.time_to_end()
+                    print(ttl, self.client.get_info())
+                    pok_list = self.client.get_pokemons()
+                    print(pok_list)
+                    print([p.info for p in self.pokemon.values()])
+                    print(f"the next stations{self.station}")
+                    print(self.pokemon.get(a.pos).edge)
+                    print(self.client.get_agents())
 
-            #
-            # if int(a.info.dest) == -1 and not self.station.get(a.id):
-            #     self.check_catch()
-            #     a.busy = False
-            #     a.pos = None
-            #     self.find_pok(a)
-            #
-            # if int(a.info.dest) == -1 and self.station.get(a.id):
-            #     print("--------------------------------------------------------------------------------")
-            #     next_node = self.station.get(a.id).pop(0)
-            #     self.client.choose_next_edge(
-            #         '{"agent_id":' + str(a.id) + ', "next_node_id":' + str(next_node) + '}')
-            #     print(a.info.dest)
-            #     ttl = self.client.time_to_end()
-            #     print(ttl, self.client.get_info())
-            #     pok_list = self.client.get_pokemons()
-            #     print(pok_list)
-            #     print([p.info for p in self.pokemon.values()])
-            #     print(f"the next stations{self.station}")
-            #     print(self.pokemon.get(a.pos).edge)
-            #     print(self.client.get_agents())
-        self.client.move()
+            self.client.move()
 
 
 
-# #
-# #
-# #
+
 def main():
     g = DiGraph()
     t = startGame(g)
-    # t.g.add_node(0)
-    # t.g.add_node(1)
-    # t.g.add_node(2)
-    # t.g.add_edge(0, 1, 1)
-    # t.g.add_edge(1, 2, 4)
-    # t.algo.shortest_path(0,1,2)
     t.load_json()
     t.get_agents()
     t.get_pokemon()

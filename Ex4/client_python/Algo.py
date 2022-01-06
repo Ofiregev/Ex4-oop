@@ -1,6 +1,6 @@
 import json
+import math
 from math import inf
-from types import SimpleNamespace
 
 import DiGraph
 # import startGame
@@ -123,8 +123,7 @@ class Algo:
         return w/speed
 
     def min_price(self, agent:agent, pok_value,pok_w):
-       return pok_value / self.time_to_take(pok_w,agent.speed)
-
+       return math.sqrt(pok_value) / self.time_to_take(pok_w,agent.speed)
 
 
     ###i want to find on which edge the pokemon is on
