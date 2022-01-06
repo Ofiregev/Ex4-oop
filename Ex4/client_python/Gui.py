@@ -1,9 +1,10 @@
 import json
 import pygame
-import time
+
 from pygame import *
 from pygame import gfxdraw
 from types import SimpleNamespace
+import time
 
 
 class Gui:
@@ -36,6 +37,15 @@ class Gui:
         self.max_x = max(list(graph.Nodes), key=lambda n: n.pos.x).pos.x
         self.max_y = max(list(graph.Nodes), key=lambda n: n.pos.y).pos.y
 
+        buttonColor = (28, 172, 74)
+        buttonWidth = 70
+        self.exit_button = Button(buttonColor, 2, 2, buttonWidth, 20, 'EXIT')
+        self.move_button = Button(buttonColor, 2 + 2 * buttonWidth, 2, buttonWidth, 20, 'MOVES')
+        self.time_button = Button(buttonColor, 2 + 3 * buttonWidth, 2, buttonWidth, 20, 'TIME')
+        self.grade_button = Button(buttonColor, 2 + 4 * buttonWidth, 2, buttonWidth, 20, 'GRADE')
+        self.isPLay = 0
+
+
         radius = 20
 
         self.g.client.start()
@@ -59,10 +69,17 @@ class Gui:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     exit(0)
+                if self.exit_button.isOver(mouse.get_pressed(3)):
+                    pygame.quit()
+                    exit(0)
+
+
+
 
             # refresh surface
             self.screen.fill(pygame.Color(0, 0, 0))
             self.screen.blit(my_image, (self.screen.get_width()/2 - 350, self.screen.get_height()/2 - 200))
+            self.drawButtons()
 
             # draw nodes
             for n in graph.Nodes:
@@ -113,6 +130,7 @@ class Gui:
             self.g.get_pokemon()
             self.g.next_station()
             time.sleep(0.1)
+            self.drawButtons()
             display.update()
 
     def scale(self, data, min_screen, max_screen, min_data, max_data):
@@ -129,6 +147,46 @@ class Gui:
             return self.scale(data, 50, self.screen.get_width() - 50, self.min_x, self.max_x)
         if y:
             return self.scale(data, 50, self.screen.get_height() - 50, self.min_y, self.max_y)
+
+    def drawButtons(self) -> None:
+        self.exit_button.draw(self.screen, (0, 0, 0))
+        data = json.loads(self.g.client.get_info())["GameServer"]
+        self.move_button.text = 'MOVES: ' + str(data['moves'])
+        self.move_button.draw(self.screen, (0, 0, 0))
+        self.time_button.text = 'TIME: ' + str(int(float(self.g.client.time_to_end()) / 1000))
+        self.time_button.draw(self.screen, (0, 0, 0))
+        self.grade_button.text = 'GRADE: ' + str(data["grade"])
+        self.grade_button.draw(self.screen, (0, 0, 0))
+
+class Button():
+    def __init__(self, color, x, y, width, height, text=''):
+        self.color = color
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.text = text
+
+    def draw(self, win, outline=None):
+        # Call this method to draw the button on the screen
+        if outline:
+            pygame.draw.rect(win, outline, (self.x - 2, self.y - 2, self.width + 4, self.height + 4), 0)
+
+        pygame.draw.rect(win, self.color, (self.x, self.y, self.width, self.height), 0)
+
+        if self.text != '':
+            font = pygame.font.SysFont('comicsans', 10)
+            text = font.render(self.text, 1, (0, 0, 0))
+            win.blit(text, (
+            self.x + (self.width / 2 - text.get_width() / 2), self.y + (self.height / 2 - text.get_height() / 2)))
+
+    def isOver(self, pos):
+        # Pos is the mouse position or a tuple of (x,y) coordinates
+        if pos[0] > self.x and pos[0] < self.x + self.width:
+            if pos[1] > self.y and pos[1] < self.y + self.height:
+                return True
+
+        return False
 
     """
     The code below should be improved significantly:

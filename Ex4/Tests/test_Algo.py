@@ -125,5 +125,6 @@ class Tests(unittest.TestCase):
         self.assertEqual(('14', '15'),graphAlgo.distance("14","15",pok_pos_x,pok_pos_y,type1))
 
 
-
+if __name__ == '__main__':
+    unittest()
 
