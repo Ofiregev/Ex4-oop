@@ -88,8 +88,8 @@ class Algo:
     def time_to_take(self, speed:float, w:float ):
         return w/speed
 
-    def max_price(self, agent:agent, pok_value,pok_w):
-       return pok_value/self.time_to_take(pok_w,agent.speed)
+    def min_price(self, agent:agent, pok_value,pok_w):
+       return pok_value / self.time_to_take(pok_w,agent.speed)
 
 
 
