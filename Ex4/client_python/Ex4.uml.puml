@@ -1,0 +1,103 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Algo
+class startGame
+class DiGraph
+class Node
+class Edge
+class Pokemon
+class Agent
+
+
+class Algo{
+DiGraph
+edges = {}
+g = DiGraph
+D = {}
+nodeQ = {}
+black = {}
+parent = {}
+load_from_json()
+shortest_path()
+Dijkstra()
+relax()
+time_to_take()
+min_price()
+distance()
+}
+class DiGraph{
+graphdict = {}
+v_size()
+e_size()
+get_all_v()
+all_in_edges_of_node()
+all_out_edges_of_node()
+add_edge()
+add_node()
+remove_node()
+remove_edge()
+getEdgeBySrc()
+getWeightOfEdge()
+posGetX()
+posGetY()
+}
+class startGame{
+DiGraph
+Algo
+pokemon = {}
+agents = {}
+station = {}
+Client
+load_json()
+get_graph()
+get_pokemon()
+get_agents()
+find_pok()
+check_catch()
+next_station()
+main_loop()
+}
+
+class Pokemon{
+info
+value
+pos
+type
+taken
+isDone
+}
+
+class Agent{
+id
+src
+dest
+speed
+info
+busy
+pos
+}
+class Node{
+id
+pos
+inEdge = {}
+outEdge = {}
+}
+class Edge{
+src
+dest
+w
+}
+
+startGame.>Algo
+startGame..>Pokemon
+startGame..>Agent
+
+Algo.>DiGraph
+DiGraph..>Node
+DiGraph..>Edge
+
+
+
+
+@enduml

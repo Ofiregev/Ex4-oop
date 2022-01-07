@@ -12,11 +12,11 @@ from players import pokemon as pok
 
 class startGame:
     def __init__(self, g: DiGraph):
-        self.g = g  ## the graph Type: Digraph
+        self.g = g  # the graph Type: Digraph
         self.algo = Algo.Algo(g)
-        self.pokemon = {}
-        self.agents = {}
-        self.station = {}
+        self.pokemon = {}  # key-pokemon pos,value-pokemon object
+        self.agents = {}  # key-agent id,value-agent object
+        self.station = {}  # key-agent id,value-path for the agent(given by shortest path algorithm).
         # default port
         PORT = 6666
         # server host (default localhost 127.0.0.1)
@@ -28,7 +28,15 @@ class startGame:
         self.client.add_agent("{\"id\":10}")
         self.client.add_agent("{\"id\":0}")
 
-    def load_json(self):
+    def main_loop(self):  # running the game until the server shout down
+        self.client.start()
+        self.get_agents()
+        while self.client.is_running() == 'true':
+            self.get_agents()
+            self.get_pokemon()
+            self.next_station()
+
+    def load_json(self):  # convert the data from the server to data structure
 
         graph_json = self.client.get_graph()
         graph_obj = json.loads(graph_json)
@@ -54,11 +62,10 @@ class startGame:
         """
         return self.g
 
-    def get_pokemon(self):
-        pokemons_json= self.client.get_pokemons()
+    def get_pokemon(self):  # get the data about the pokemons from the server and convert it to pokemons objects
+        pokemons_json = self.client.get_pokemons()
         pokemon_obj = json.loads(pokemons_json)
         pokemons = pokemon_obj["Pokemons"]
-        # pokemons = [p.Pokemon for p in pokemons]
         for p in pokemons:
             if not self.pokemon.get(p.get("Pokemon").get("pos")):
                 w = p.get("Pokemon").get("pos").split(',')
@@ -75,15 +82,6 @@ class startGame:
                 if self.pokemon.get(p.get("Pokemon").get("pos")).isDone:
                     self.pokemon.pop(p.get("Pokemon").get("pos"))
 
-    def main_loop(self):
-        self.client.start()
-        self.get_agents()
-        while self.client.is_running() == 'true':
-            self.get_agents()
-            self.get_pokemon()
-            self.next_station()
-
-
     def get_agents(self):
         agents_json = self.client.get_agents()
         agents_obj = json.loads(agents_json)
@@ -96,6 +94,7 @@ class startGame:
             if float(a.get("Agent").get("speed")) != float(self.agents.get(a.get("Agent").get("id")).speed):
                 self.agents.get(a.get("Agent").get("id")).speed = a.get("Agent").get("speed")
 
+    # This function give each agent the feet pokemon by his position and its value
 
     def find_pok(self, agent: players.agent):
         min = math.inf
@@ -117,6 +116,7 @@ class startGame:
         self.station[agent.id] = l
         return res[0]
 
+    # This function checks if the pokemon has already catch by an agent
     def check_catch(self):
         pokemons = json.loads(self.client.get_pokemons(),
                               object_hook=lambda d: SimpleNamespace(**d)).Pokemons
@@ -127,28 +127,27 @@ class startGame:
             temp[p.pos] = self.pokemon.get(p.pos)
         self.pokemon = temp
 
+    # This function choose the agent his next destination, using all the other function in the project
     def next_station(self):
-            for a in self.agents.values():
-                if int(a.dest) == -1:
-                    if self.pokemon.get(a.pos):
-                        self.pokemon.get(a.pos).taken = False
-                    self.check_catch()
-                    self.find_pok(a)
-                    print("--------------------------------------------------------------------------------")
-                    next_node = self.station.get(a.id).pop(0)
-                    self.client.choose_next_edge(
-                        '{"agent_id":' + str(a.id) + ', "next_node_id":' + str(next_node) + '}')
-                    ttl = self.client.time_to_end()
-                    print(ttl, self.client.get_info())
-                    pok_list = self.client.get_pokemons()
-                    print(pok_list)
-                    print([p.info for p in self.pokemon.values()])
-                    print(f"the next stations{self.station}")
-                    print(self.client.get_agents())
+        for a in self.agents.values():
+            if int(a.dest) == -1:
+                if self.pokemon.get(a.pos):
+                    self.pokemon.get(a.pos).taken = False
+                self.check_catch()
+                self.find_pok(a)
+                print("--------------------------------------------------------------------------------")
+                next_node = self.station.get(a.id).pop(0)
+                self.client.choose_next_edge(
+                    '{"agent_id":' + str(a.id) + ', "next_node_id":' + str(next_node) + '}')
+                ttl = self.client.time_to_end()
+                print(ttl, self.client.get_info())
+                pok_list = self.client.get_pokemons()
+                print(pok_list)
+                print([p.info for p in self.pokemon.values()])
+                print(f"the next stations{self.station}")
+                print(self.client.get_agents())
 
-            self.client.move()
-
-
+        self.client.move()
 
 
 def main():
@@ -160,6 +159,5 @@ def main():
     Gui(t)
 
 
-
 if __name__ == '__main__':
-     main()
+    main()
