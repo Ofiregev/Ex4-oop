@@ -49,6 +49,7 @@ class Gui:
 
         self.g.client.start()
         while self.g.client.is_running() == 'true':
+            """"this is the mainLoop of the game, it last untill the server is down"""
             pokemons = json.loads(self.g.client.get_pokemons(),
                                   object_hook=lambda d: SimpleNamespace(**d)).Pokemons
             pokemons = [p.Pokemon for p in pokemons]
@@ -120,8 +121,10 @@ class Gui:
             for p in pokemons:
                 if int(p.type) == -1:
                     pygame.draw.circle(self.screen, pygame.Color(238, 90, 175), (int(p.pos.x), int(p.pos.y)), 10)
+                    ###pink
                 if int(p.type) == 1:
                     pygame.draw.circle(self.screen, pygame.Color(143, 254, 9), (int(p.pos.x), int(p.pos.y)), 10)
+                    ###green
 
             # update screen changes
             display.update()
@@ -132,6 +135,7 @@ class Gui:
             self.g.get_pokemon()
             self.g.next_station()
             time.sleep(0.08)
+            """" for runing the prog only 10 times in a second"""
             self.drawButtons()
             display.update()
 
