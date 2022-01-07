@@ -131,7 +131,7 @@ class Gui:
             self.g.get_agents()
             self.g.get_pokemon()
             self.g.next_station()
-            time.sleep(0.085)
+            time.sleep(0.08)
             self.drawButtons()
             display.update()
 
