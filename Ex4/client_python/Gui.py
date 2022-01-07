@@ -1,10 +1,9 @@
 import json
 import pygame
-
+import time
 from pygame import *
 from pygame import gfxdraw
 from types import SimpleNamespace
-import time
 
 
 class Gui:
